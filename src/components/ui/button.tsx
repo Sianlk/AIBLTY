@@ -5,19 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/30",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-primary/30 bg-transparent text-primary hover:bg-primary/10 hover:border-primary/50",
+        outline: "border border-primary/40 bg-transparent text-primary hover:bg-primary/10 hover:border-primary",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-muted hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        glow: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl",
-        glass: "bg-card/60 backdrop-blur-xl border border-primary/20 text-foreground hover:border-primary/40 hover:bg-card/80",
-        hero: "bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:shadow-xl hover:scale-105",
+        gold: "bg-gradient-to-r from-gold to-accent text-primary-foreground font-semibold shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:shadow-xl hover:scale-105",
+        glass: "bg-card/50 backdrop-blur-xl border border-primary/20 text-foreground hover:border-primary/50 hover:bg-card/70",
+        luxury: "bg-gradient-to-r from-gold via-gold-light to-gold text-primary-foreground font-semibold shadow-[0_0_30px_hsl(45,100%,50%,0.3)] hover:shadow-[0_0_50px_hsl(45,100%,50%,0.5)] hover:scale-105 transition-all duration-500",
+        platinum: "bg-gradient-to-r from-platinum to-champagne text-background font-semibold shadow-lg hover:shadow-xl hover:scale-105",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -31,7 +32,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 export interface ButtonProps
@@ -44,7 +45,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
-  },
+  }
 );
 Button.displayName = "Button";
 
