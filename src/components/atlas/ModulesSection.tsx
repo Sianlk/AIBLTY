@@ -9,128 +9,56 @@ import {
   DollarSign,
   Plug,
   Shield,
-  Cpu,
-  Globe,
-  Zap,
-  TrendingUp,
-  Bot,
-  Coins,
-  Network,
-  Lock,
 } from "lucide-react";
 
 const modules = [
   {
     icon: Rocket,
-    title: "Genesis App Forge",
-    description: "One-command full-stack deployment. Frontend, backend, APIs, auth, payments—instant production.",
-    status: "premium" as const,
-    stats: [{ label: "Apps Built", value: "∞" }, { label: "Deploy Time", value: "<60s" }],
+    title: "App Generator",
+    description: "One-click full-stack application generation with complete architecture, APIs, and deployment.",
+    status: "active" as const,
   },
   {
     icon: Brain,
-    title: "Quantum Intelligence",
-    description: "Self-evolving neural networks that learn, adapt, and optimize beyond human capability.",
-    status: "evolving" as const,
-    stats: [{ label: "IQ Level", value: "∞" }, { label: "Learning", value: "24/7" }],
+    title: "Problem Solver",
+    description: "Universal problem analysis with root cause identification and ranked solutions.",
+    status: "ready" as const,
   },
   {
     icon: Building2,
-    title: "Empire Builder",
-    description: "Complete business creation with revenue models, marketing funnels, and automated scaling.",
-    status: "premium" as const,
-    stats: [{ label: "Businesses", value: "847" }, { label: "Success", value: "99.7%" }],
-  },
-  {
-    icon: DollarSign,
-    title: "Revenue Automaton",
-    description: "Autonomous profit generation through multi-channel monetization and dynamic pricing.",
-    status: "active" as const,
-    stats: [{ label: "Daily Rev", value: "$2.8M" }, { label: "Growth", value: "+347%" }],
-  },
-  {
-    icon: Bot,
-    title: "Marketing Swarm",
-    description: "Self-propagating viral campaigns across all platforms with autonomous optimization.",
-    status: "active" as const,
-    stats: [{ label: "Reach", value: "847M" }, { label: "Viral", value: "100%" }],
-  },
-  {
-    icon: Coins,
-    title: "Quantum Mining",
-    description: "Next-gen blockchain mining with quantum-enhanced efficiency and zero energy waste.",
-    status: "premium" as const,
-    stats: [{ label: "Hash Rate", value: "∞" }, { label: "Efficiency", value: "99.9%" }],
+    title: "Venture Foundry",
+    description: "Complete business generation including models, pricing, go-to-market strategy.",
+    status: "ready" as const,
   },
   {
     icon: Search,
-    title: "Omniscient Research",
-    description: "Access to all human knowledge synthesized and analyzed in real-time.",
+    title: "Research Engine",
+    description: "Deep research and insight generation across science, tech, economics, and more.",
     status: "ready" as const,
-    stats: [{ label: "Sources", value: "∞" }, { label: "Accuracy", value: "100%" }],
   },
   {
     icon: Sparkles,
-    title: "Self-Evolution Engine",
-    description: "Continuous improvement without human intervention. Gets smarter every millisecond.",
-    status: "evolving" as const,
-    stats: [{ label: "Updates", value: "∞/sec" }, { label: "Version", value: "∞" }],
+    title: "Evolution Layer",
+    description: "Continuous learning from your patterns and decisions for personalized assistance.",
+    status: "coming" as const,
   },
   {
-    icon: Shield,
-    title: "Invincible Security",
-    description: "Quantum-encrypted, self-healing defense system. Unhackable by design.",
-    status: "active" as const,
-    stats: [{ label: "Threats", value: "0" }, { label: "Uptime", value: "100%" }],
+    icon: DollarSign,
+    title: "Monetization Engine",
+    description: "Automatic profit models, pricing strategies, and revenue optimization.",
+    status: "ready" as const,
   },
   {
     icon: Plug,
-    title: "Universal Integrator",
-    description: "Instant connection to every API, service, and platform in existence.",
+    title: "Integration Hub",
+    description: "Pre-built connections to Stripe, Google, Notion, and 100+ services.",
     status: "ready" as const,
-    stats: [{ label: "APIs", value: "∞" }, { label: "Latency", value: "0ms" }],
   },
   {
-    icon: Network,
-    title: "Blockchain Nexus",
-    description: "Multi-chain smart contracts, NFTs, DeFi protocols with autonomous optimization.",
-    status: "premium" as const,
-    stats: [{ label: "Chains", value: "All" }, { label: "Gas", value: "0" }],
-  },
-  {
-    icon: Lock,
-    title: "Self-Repair Matrix",
-    description: "Autonomous bug detection and resolution. Zero downtime, infinite reliability.",
-    status: "evolving" as const,
-    stats: [{ label: "Bugs", value: "0" }, { label: "Fix Time", value: "0ms" }],
-  },
-  {
-    icon: TrendingUp,
-    title: "Predictive Oracle",
-    description: "Market predictions, trend analysis, and opportunity detection with 99.97% accuracy.",
-    status: "active" as const,
-    stats: [{ label: "Accuracy", value: "99.97%" }, { label: "Predictions", value: "∞" }],
-  },
-  {
-    icon: Globe,
-    title: "Global Domination",
-    description: "Multi-language, multi-currency, multi-market expansion on autopilot.",
-    status: "ready" as const,
-    stats: [{ label: "Markets", value: "195" }, { label: "Languages", value: "∞" }],
-  },
-  {
-    icon: Cpu,
-    title: "Infinite Compute",
-    description: "Unlimited processing power through distributed quantum cloud architecture.",
-    status: "premium" as const,
-    stats: [{ label: "Power", value: "∞" }, { label: "Cost", value: "$0" }],
-  },
-  {
-    icon: Zap,
-    title: "Instant Deployment",
-    description: "From concept to global deployment in under one second. No configuration needed.",
-    status: "active" as const,
-    stats: [{ label: "Speed", value: "<1s" }, { label: "Regions", value: "∞" }],
+    icon: Shield,
+    title: "Blockchain Layer",
+    description: "Optional document hashing, timestamps, and IP validation capabilities.",
+    status: "coming" as const,
   },
 ];
 
@@ -146,13 +74,13 @@ export const ModulesSection = () => {
           className="text-center mb-16"
         >
           <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase mb-4 block">
-            Capability Matrix
+            System Modules
           </span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
-            <span className="gradient-text">Infinite</span> Power Modules
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Capability <span className="gradient-text">Matrix</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Sixteen autonomous systems working in perfect harmony to dominate every market.
+            Eight interconnected modules working in harmony to transform your ideas into reality.
           </p>
         </motion.div>
 
@@ -165,7 +93,6 @@ export const ModulesSection = () => {
               title={module.title}
               description={module.description}
               status={module.status}
-              stats={module.stats}
               index={index}
             />
           ))}

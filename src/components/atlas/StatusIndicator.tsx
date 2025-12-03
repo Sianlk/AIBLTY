@@ -1,31 +1,26 @@
 import { motion } from "framer-motion";
 
 interface StatusIndicatorProps {
-  status: "online" | "processing" | "idle" | "earning";
+  status: "online" | "processing" | "idle";
   label?: string;
 }
 
 export const StatusIndicator = ({ status, label }: StatusIndicatorProps) => {
   const statusConfig = {
     online: {
-      color: "bg-emerald-400",
-      glow: "shadow-emerald-400/50",
-      text: "SYSTEMS OPTIMAL",
+      color: "bg-glow-success",
+      glow: "shadow-glow-success/50",
+      text: "ONLINE",
     },
     processing: {
-      color: "bg-primary",
-      glow: "shadow-primary/50",
+      color: "bg-glow-warning",
+      glow: "shadow-glow-warning/50",
       text: "PROCESSING",
     },
     idle: {
       color: "bg-muted-foreground",
       glow: "",
-      text: "STANDBY",
-    },
-    earning: {
-      color: "bg-primary",
-      glow: "shadow-primary/50",
-      text: "GENERATING REVENUE",
+      text: "IDLE",
     },
   };
 
@@ -36,22 +31,24 @@ export const StatusIndicator = ({ status, label }: StatusIndicatorProps) => {
       <div className="relative">
         <motion.div
           className={`w-2 h-2 rounded-full ${config.color}`}
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [1, 0.7, 1],
-          }}
+          animate={status === "online" || status === "processing" ? {
+            scale: [1, 1.2, 1],
+            opacity: [1, 0.8, 1],
+          } : {}}
           transition={{
-            duration: status === "processing" || status === "earning" ? 0.8 : 2,
+            duration: status === "processing" ? 0.5 : 2,
             repeat: Infinity,
           }}
         />
-        <motion.div
-          className={`absolute inset-0 rounded-full ${config.color}`}
-          animate={{ scale: [1, 2.5], opacity: [0.6, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
+        {(status === "online" || status === "processing") && (
+          <motion.div
+            className={`absolute inset-0 rounded-full ${config.color}`}
+            animate={{ scale: [1, 2], opacity: [0.5, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+        )}
       </div>
-      <span className="text-xs font-mono text-muted-foreground tracking-wider">
+      <span className="text-xs font-mono text-muted-foreground">
         {label || config.text}
       </span>
     </div>
