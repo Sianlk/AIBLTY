@@ -3,64 +3,72 @@ import { motion } from "framer-motion";
 export const AtlasLogo = () => {
   return (
     <motion.div 
-      className="flex items-center gap-3"
+      className="flex items-center gap-4"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6 }}
     >
-      {/* Hexagonal logo mark */}
+      {/* Luxury hexagonal logo */}
       <div className="relative">
         <motion.div
-          className="w-12 h-12 relative"
+          className="w-14 h-14 relative"
           animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         >
           <svg viewBox="0 0 100 100" className="w-full h-full">
             <defs>
-              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="hsl(186, 100%, 50%)" />
-                <stop offset="100%" stopColor="hsl(270, 60%, 50%)" />
+              <linearGradient id="luxuryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="hsl(45, 100%, 70%)" />
+                <stop offset="50%" stopColor="hsl(45, 100%, 50%)" />
+                <stop offset="100%" stopColor="hsl(30, 100%, 45%)" />
               </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
             <polygon
               points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5"
               fill="none"
-              stroke="url(#logoGradient)"
+              stroke="url(#luxuryGradient)"
               strokeWidth="2"
-              className="drop-shadow-[0_0_10px_hsl(186,100%,50%,0.5)]"
+              filter="url(#glow)"
             />
             <polygon
-              points="50,20 75,35 75,65 50,80 25,65 25,35"
+              points="50,18 78,33.5 78,66.5 50,82 22,66.5 22,33.5"
               fill="none"
-              stroke="url(#logoGradient)"
-              strokeWidth="1.5"
-              opacity="0.6"
+              stroke="url(#luxuryGradient)"
+              strokeWidth="1"
+              opacity="0.5"
             />
             <circle
               cx="50"
               cy="50"
-              r="8"
-              fill="url(#logoGradient)"
-              className="drop-shadow-[0_0_15px_hsl(186,100%,50%,0.8)]"
+              r="10"
+              fill="url(#luxuryGradient)"
+              filter="url(#glow)"
             />
           </svg>
         </motion.div>
         
-        {/* Pulse ring */}
+        {/* Outer pulse ring */}
         <motion.div
-          className="absolute inset-0 border-2 border-primary/30 rounded-full"
-          animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute inset-[-4px] border border-primary/20 rounded-full"
+          animate={{ scale: [1, 1.3], opacity: [0.4, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
         />
       </div>
       
       {/* Text */}
       <div className="flex flex-col">
-        <span className="text-xl font-bold tracking-wider glow-text text-primary">
+        <span className="text-2xl font-display font-bold tracking-wide gradient-text">
           ATLAS
         </span>
-        <span className="text-xs font-mono text-muted-foreground tracking-widest">
-          GENESIS OS
+        <span className="text-[10px] font-mono text-muted-foreground tracking-[0.25em] uppercase">
+          Genesis OS
         </span>
       </div>
     </motion.div>

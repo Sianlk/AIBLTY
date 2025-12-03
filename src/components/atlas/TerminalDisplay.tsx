@@ -1,35 +1,46 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Terminal, Copy, Check } from "lucide-react";
+import { Terminal, Copy, Check, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const terminalLines = [
-  { type: "command", text: "> atlas.init()" },
-  { type: "success", text: "✓ Genesis Protocol activated" },
-  { type: "info", text: "→ Scanning user requirements..." },
-  { type: "info", text: "→ Generating system architecture..." },
-  { type: "success", text: "✓ Database schema created" },
-  { type: "success", text: "✓ API endpoints configured" },
-  { type: "success", text: "✓ Authentication layer ready" },
-  { type: "info", text: "→ Building frontend components..." },
-  { type: "success", text: "✓ UI/UX screens generated" },
-  { type: "success", text: "✓ Deployment pipeline configured" },
+  { type: "command", text: "> atlas.quantum.init()" },
+  { type: "success", text: "✓ Quantum cores synchronized" },
+  { type: "info", text: "→ Initializing self-evolution protocols..." },
+  { type: "success", text: "✓ Neural networks calibrated (IQ: ∞)" },
+  { type: "info", text: "→ Activating revenue generation engines..." },
+  { type: "success", text: "✓ Connected to 847 payment processors" },
+  { type: "success", text: "✓ Marketing swarm deployed to 195 markets" },
+  { type: "info", text: "→ Establishing blockchain presence..." },
+  { type: "success", text: "✓ Smart contracts deployed (gas: $0)" },
+  { type: "success", text: "✓ Mining operations: OPTIMAL" },
+  { type: "info", text: "→ Security matrix: IMPENETRABLE" },
+  { type: "success", text: "✓ Self-repair systems: ACTIVE" },
   { type: "output", text: "" },
-  { type: "success", text: "★ APPLICATION READY FOR LAUNCH" },
+  { type: "money", text: "💰 Revenue stream initiated: +$847.42/second" },
+  { type: "output", text: "" },
+  { type: "success", text: "★ ATLAS GENESIS OS: FULLY OPERATIONAL" },
+  { type: "success", text: "★ Autonomous wealth generation: ENGAGED" },
 ];
 
 export const TerminalDisplay = () => {
   const [visibleLines, setVisibleLines] = useState<number>(0);
   const [copied, setCopied] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    if (visibleLines < terminalLines.length) {
+    if (isRunning && visibleLines < terminalLines.length) {
       const timer = setTimeout(() => {
         setVisibleLines((prev) => prev + 1);
-      }, 400);
+      }, 300);
       return () => clearTimeout(timer);
     }
-  }, [visibleLines]);
+  }, [visibleLines, isRunning]);
+
+  const handleRun = () => {
+    setVisibleLines(0);
+    setIsRunning(true);
+  };
 
   const handleCopy = () => {
     const text = terminalLines.map((l) => l.text).join("\n");
@@ -43,11 +54,11 @@ export const TerminalDisplay = () => {
       case "command":
         return "text-primary";
       case "success":
-        return "text-glow-success";
+        return "text-emerald-400";
       case "info":
         return "text-muted-foreground";
-      case "output":
-        return "text-foreground";
+      case "money":
+        return "text-primary font-semibold";
       default:
         return "text-foreground";
     }
@@ -60,37 +71,49 @@ export const TerminalDisplay = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-panel overflow-hidden"
+          className="luxury-card overflow-hidden"
         >
           {/* Terminal header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/30">
-            <div className="flex items-center gap-3">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-destructive/80" />
-                <div className="w-3 h-3 rounded-full bg-glow-warning/80" />
-                <div className="w-3 h-3 rounded-full bg-glow-success/80" />
+          <div className="flex items-center justify-between px-5 py-4 border-b border-primary/10 bg-card/50">
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
               </div>
               <div className="flex items-center gap-2 text-sm font-mono text-muted-foreground">
                 <Terminal className="w-4 h-4" />
-                <span>atlas-terminal</span>
+                <span>atlas-quantum-terminal</span>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopy}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              {copied ? (
-                <Check className="w-4 h-4" />
-              ) : (
-                <Copy className="w-4 h-4" />
-              )}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRun}
+                className="gap-2"
+              >
+                <Play className="w-3 h-3" />
+                Run
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
 
           {/* Terminal content */}
-          <div className="p-6 font-mono text-sm space-y-2 min-h-[400px] bg-background/50">
+          <div className="p-6 font-mono text-sm space-y-2 min-h-[450px] bg-background/60">
+            {!isRunning && visibleLines === 0 && (
+              <div className="text-muted-foreground">
+                Click "Run" to initialize ATLAS GENESIS...
+              </div>
+            )}
             {terminalLines.slice(0, visibleLines).map((line, index) => (
               <motion.div
                 key={index}
@@ -104,11 +127,11 @@ export const TerminalDisplay = () => {
             ))}
             
             {/* Cursor */}
-            {visibleLines < terminalLines.length && (
+            {isRunning && visibleLines < terminalLines.length && (
               <motion.span
                 animate={{ opacity: [1, 0] }}
                 transition={{ duration: 0.5, repeat: Infinity }}
-                className="inline-block w-2 h-4 bg-primary ml-1"
+                className="inline-block w-2 h-5 bg-primary ml-1"
               />
             )}
           </div>
