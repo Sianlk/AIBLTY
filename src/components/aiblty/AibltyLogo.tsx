@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 
-export const AibltyLogo = () => {
+interface AibltyLogoProps {
+  className?: string;
+}
+
+export const AibltyLogo = ({ className }: AibltyLogoProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
