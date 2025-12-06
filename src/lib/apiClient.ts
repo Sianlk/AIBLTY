@@ -92,6 +92,10 @@ class ApiClient {
   }
 
   // Sessions
+  async getSessions(projectId: string) {
+    return this.request<any>(`/sessions/project/${projectId}`);
+  }
+
   async createSession(projectId: string, type: string) {
     return this.request<any>(`/sessions/project/${projectId}`, {
       method: 'POST',
@@ -103,20 +107,31 @@ class ApiClient {
     return this.request<any>(`/sessions/${id}`);
   }
 
-  // AI
-  async solveProblem(projectId: string, prompt: string) {
-    return this.request<any>('/ai/solve', {
+  // Messages
+  async getMessages(sessionId: string) {
+    return this.request<any>(`/messages/session/${sessionId}`);
+  }
+
+  async createMessage(sessionId: string, role: string, content: string) {
+    return this.request<any>('/messages', {
       method: 'POST',
-      body: JSON.stringify({ projectId, prompt }),
+      body: JSON.stringify({ sessionId, role, content }),
     });
   }
 
-  async buildBusiness(projectId: string, prompt: string) {
-    return this.request<any>('/ai/build', {
-      method: 'POST',
-      body: JSON.stringify({ projectId, prompt }),
-    });
-  }
+  // AI
+  ai = {
+    solveProblem: (projectId: string, prompt: string) =>
+      this.request<any>('/ai/solve', {
+        method: 'POST',
+        body: JSON.stringify({ projectId, prompt }),
+      }),
+    buildBusiness: (projectId: string, prompt: string) =>
+      this.request<any>('/ai/build', {
+        method: 'POST',
+        body: JSON.stringify({ projectId, prompt }),
+      }),
+  };
 
   async chat(sessionId: string, prompt: string) {
     return this.request<any>('/ai/chat', {
@@ -138,17 +153,22 @@ class ApiClient {
   }
 
   // Admin
-  async getAdminStats() {
-    return this.request<any>('/admin/stats');
-  }
-
-  async getAdminUsers(page = 1) {
-    return this.request<any>(`/admin/users?page=${page}`);
-  }
-
-  async getAdminPayments(page = 1) {
-    return this.request<any>(`/admin/payments?page=${page}`);
-  }
+  admin = {
+    getUsers: (page = 1) => this.request<any>(`/admin/users?page=${page}`),
+    getStats: () => this.request<any>('/admin/stats'),
+    getPayments: (page = 1) => this.request<any>(`/admin/payments?page=${page}`),
+    getDeployments: (page = 1) => this.request<any>(`/admin/deployments?page=${page}`),
+    updateUserRole: (userId: string, role: string) =>
+      this.request<any>(`/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        body: JSON.stringify({ role }),
+      }),
+    updateUserPlan: (userId: string, plan: string) =>
+      this.request<any>(`/admin/users/${userId}/plan`, {
+        method: 'PATCH',
+        body: JSON.stringify({ plan }),
+      }),
+  };
 
   // Deploy
   async triggerDeployment(target = 'vps') {
