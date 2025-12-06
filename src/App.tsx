@@ -17,11 +17,13 @@ import PricingPage from "./pages/Pricing";
 // Dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProjectsPage from "./pages/dashboard/Projects";
+import ProjectDetailPage from "./pages/dashboard/ProjectDetail";
 import SolverPage from "./pages/dashboard/Solver";
 import BuilderPage from "./pages/dashboard/Builder";
 import AutomationPage from "./pages/dashboard/Automation";
 import InsightsPage from "./pages/dashboard/Insights";
 import SettingsPage from "./pages/dashboard/Settings";
+import AdminPage from "./pages/dashboard/Admin";
 
 const queryClient = new QueryClient();
 
@@ -43,11 +45,15 @@ const App = () => (
             {/* Protected Dashboard Routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+            <Route path="/dashboard/projects/:projectId" element={<ProtectedRoute><ProjectDetailPage /></ProtectedRoute>} />
             <Route path="/dashboard/solver" element={<ProtectedRoute><SolverPage /></ProtectedRoute>} />
             <Route path="/dashboard/builder" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
             <Route path="/dashboard/automation" element={<ProtectedRoute><AutomationPage /></ProtectedRoute>} />
             <Route path="/dashboard/insights" element={<ProtectedRoute><InsightsPage /></ProtectedRoute>} />
             <Route path="/dashboard/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            
+            {/* Admin Routes */}
+            <Route path="/dashboard/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
