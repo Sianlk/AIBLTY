@@ -25,10 +25,10 @@ const buttonVariants = cva(
           hover:shadow-[0_0_30px_hsl(var(--gold)/0.2)]
         `,
         secondary: `
-          bg-gradient-to-b from-secondary via-secondary to-secondary/90 
-          text-secondary-foreground font-bold
-          shadow-[0_1px_0_0_hsl(var(--glow-elite)/0.4)_inset,0_-1px_0_0_hsl(275_55%_20%/0.8)_inset,0_4px_12px_hsl(275_55%_20%/0.4)]
-          hover:shadow-[0_1px_0_0_hsl(var(--glow-elite)/0.5)_inset,0_-1px_0_0_hsl(275_55%_20%/0.9)_inset,0_8px_20px_hsl(275_55%_20%/0.5)]
+          bg-gradient-to-b from-gold-muted via-gold-dark to-gold-deep 
+          text-champagne font-bold
+          shadow-[0_1px_0_0_hsl(var(--gold-muted)/0.4)_inset,0_-1px_0_0_hsl(var(--gold-deep)/0.8)_inset,0_4px_12px_hsl(var(--gold-deep)/0.4)]
+          hover:shadow-[0_1px_0_0_hsl(var(--gold)/0.5)_inset,0_-1px_0_0_hsl(var(--gold-deep)/0.9)_inset,0_8px_20px_hsl(var(--gold-deep)/0.5)]
           hover:translate-y-[-1px]
         `,
         ghost: "hover:bg-gold/10 hover:text-champagne",
@@ -66,10 +66,10 @@ const buttonVariants = cva(
           hover:translate-y-[-3px]
         `,
         elite: `
-          bg-gradient-to-r from-glow-elite via-secondary to-glow-elite
-          text-white font-bold tracking-wide
-          shadow-[0_2px_0_0_hsl(275_80%_70%/0.6)_inset,0_-2px_0_0_hsl(275_55%_20%/0.9)_inset,0_8px_32px_hsl(275_55%_20%/0.5),0_0_60px_hsl(var(--glow-elite)/0.25)]
-          hover:shadow-[0_2px_0_0_hsl(275_80%_75%/0.7)_inset,0_-2px_0_0_hsl(275_55%_25%/0.9)_inset,0_12px_48px_hsl(275_55%_20%/0.6),0_0_80px_hsl(var(--glow-elite)/0.35)]
+          bg-gradient-to-r from-gold-bright via-gold-light to-champagne
+          text-background font-bold tracking-wide
+          shadow-[0_2px_0_0_hsl(42_50%_90%/0.7)_inset,0_-2px_0_0_hsl(var(--gold)/0.9)_inset,0_8px_32px_hsl(var(--gold-dark)/0.5),0_0_60px_hsl(var(--gold-light)/0.25)]
+          hover:shadow-[0_2px_0_0_hsl(42_50%_95%/0.8)_inset,0_-2px_0_0_hsl(var(--gold-bright)/0.9)_inset,0_12px_48px_hsl(var(--gold-dark)/0.6),0_0_80px_hsl(var(--gold-light)/0.35)]
           hover:translate-y-[-2px]
         `,
       },

@@ -191,8 +191,8 @@ export function AIChatWidget({
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                   {msg.role === "user" && (
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary/30 to-glow-elite/30 flex items-center justify-center flex-shrink-0 border border-secondary/40">
-                      <User className="w-4 h-4 text-secondary" />
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold-muted/30 to-gold-dark/30 flex items-center justify-center flex-shrink-0 border border-gold/40">
+                      <User className="w-4 h-4 text-gold-light" />
                     </div>
                   )}
                 </motion.div>

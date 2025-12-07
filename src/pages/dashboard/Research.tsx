@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import api from '@/lib/apiClient';
+import { sendAIMessage } from '@/lib/aiService';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Search, Send, Loader2, Sparkles, Copy, Check, RefreshCw,
@@ -66,9 +65,17 @@ IMPORTANT: Include a disclaimer that this is AI-generated research and should be
     setResult(null);
 
     try {
-      const projectRes = await api.createProject('Research Query', query.slice(0, 100));
-      const response = await api.ai.solveProblem(projectRes.data.id, fullPrompt);
-      setResult(response.data?.message || 'Research complete. No detailed response available.');
+      const response = await sendAIMessage(
+        [{ role: 'user', content: fullPrompt }],
+        'research'
+      );
+      
+      if (response.success) {
+        setResult(response.content);
+        toast({ title: 'Research Complete', description: 'Your research report is ready' });
+      } else {
+        throw new Error(response.error || 'Failed to complete research');
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -103,11 +110,11 @@ IMPORTANT: Include a disclaimer that this is AI-generated research and should be
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
-            <Search className="w-8 h-8 text-blue-400" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold/20 to-gold-dark/20 flex items-center justify-center mx-auto mb-4 border border-gold/30">
+            <Search className="w-8 h-8 text-gold-light" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Research Engine</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold mb-2 gradient-text-premium font-display">Research Engine</h1>
+          <p className="text-platinum-dark">
             Deep research across science, technology, economics, and more
           </p>
         </motion.div>
@@ -125,8 +132,8 @@ IMPORTANT: Include a disclaimer that this is AI-generated research and should be
               onClick={() => setSelectedDomain(domain.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
                 selectedDomain === domain.id
-                  ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                  : 'border-border bg-muted/50 hover:border-muted-foreground'
+                  ? 'border-gold bg-gold/10 text-champagne'
+                  : 'border-border bg-muted/50 hover:border-gold/50'
               }`}
             >
               <domain.icon className="w-4 h-4" />

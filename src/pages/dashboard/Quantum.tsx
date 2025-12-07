@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import api from '@/lib/apiClient';
+import { sendAIMessage } from '@/lib/aiService';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Atom, Send, Loader2, Sparkles, Copy, Check, RefreshCw,
@@ -24,12 +24,12 @@ const quantumCapabilities = [
 ];
 
 const applicationDomains = [
-  { id: 'medical', label: 'Medical & Healthcare', icon: Stethoscope, desc: 'Drug discovery, disease analysis, treatment optimization', color: 'text-red-400' },
-  { id: 'innovation', label: 'Scientific Innovation', icon: FlaskConical, desc: 'Material science, physics breakthroughs, new discoveries', color: 'text-blue-400' },
-  { id: 'business', label: 'Business Optimization', icon: Building2, desc: 'Supply chain, resource allocation, financial modeling', color: 'text-green-400' },
-  { id: 'environment', label: 'Climate & Environment', icon: Leaf, desc: 'Climate modeling, sustainability solutions, ecosystem analysis', color: 'text-emerald-400' },
-  { id: 'finance', label: 'Financial Engineering', icon: Coins, desc: 'Portfolio optimization, risk analysis, market prediction', color: 'text-yellow-400' },
-  { id: 'ai', label: 'AI & Machine Learning', icon: Brain, desc: 'Neural architecture search, hyperparameter tuning', color: 'text-purple-400' },
+  { id: 'medical', label: 'Medical & Healthcare', icon: Stethoscope, desc: 'Drug discovery, disease analysis, treatment optimization', color: 'text-gold-light' },
+  { id: 'innovation', label: 'Scientific Innovation', icon: FlaskConical, desc: 'Material science, physics breakthroughs, new discoveries', color: 'text-gold' },
+  { id: 'business', label: 'Business Optimization', icon: Building2, desc: 'Supply chain, resource allocation, financial modeling', color: 'text-champagne' },
+  { id: 'environment', label: 'Climate & Environment', icon: Leaf, desc: 'Climate modeling, sustainability solutions, ecosystem analysis', color: 'text-gold-bright' },
+  { id: 'finance', label: 'Financial Engineering', icon: Coins, desc: 'Portfolio optimization, risk analysis, market prediction', color: 'text-gold-light' },
+  { id: 'ai', label: 'AI & Machine Learning', icon: Brain, desc: 'Neural architecture search, hyperparameter tuning', color: 'text-champagne' },
 ];
 
 export default function QuantumPage() {
@@ -114,10 +114,17 @@ Format with clear sections, quantitative metrics where applicable, and specific 
     setResult(null);
 
     try {
-      const projectRes = await api.createProject('Quantum Analysis', problemDescription.slice(0, 100));
-      const response = await api.ai.solveProblem(projectRes.data.id, advancedPrompt);
-      setResult(response.data?.message || 'Analysis complete.');
-      toast({ title: 'Analysis Complete', description: 'Quantum computation finished successfully' });
+      const response = await sendAIMessage(
+        [{ role: 'user', content: advancedPrompt }],
+        'quantum'
+      );
+      
+      if (response.success) {
+        setResult(response.content);
+        toast({ title: 'Analysis Complete', description: 'Quantum computation finished successfully' });
+      } else {
+        throw new Error(response.error || 'Failed to run quantum analysis');
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -146,11 +153,11 @@ Format with clear sections, quantitative metrics where applicable, and specific 
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500/30 via-purple-500/20 to-primary/30 flex items-center justify-center mx-auto mb-4 border border-violet-500/30">
-            <Atom className="w-10 h-10 text-violet-400" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold/30 via-gold-light/20 to-gold/30 flex items-center justify-center mx-auto mb-4 border border-gold/30">
+            <Atom className="w-10 h-10 text-gold-light" />
           </div>
-          <h1 className="text-3xl font-bold mb-2 gradient-text">Quantum Engine</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold mb-2 gradient-text-premium font-display">Quantum Engine</h1>
+          <p className="text-platinum max-w-2xl mx-auto">
             Revolutionary computational intelligence for breakthrough discoveries, 
             medical analysis, scientific innovation, and extreme optimization
           </p>
@@ -169,13 +176,13 @@ Format with clear sections, quantitative metrics where applicable, and specific 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 + i * 0.05 }}
-              className="glass-panel p-4 text-center group hover:border-violet-500/50 transition-all"
+              className="glass-panel p-4 text-center group hover:border-gold/50 transition-all"
             >
-              <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-2 group-hover:bg-violet-500/20 transition-colors">
-                <cap.icon className="w-6 h-6 text-violet-400" />
+              <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mx-auto mb-2 group-hover:bg-gold/20 transition-colors">
+                <cap.icon className="w-6 h-6 text-gold-light" />
               </div>
-              <h3 className="text-sm font-semibold mb-1">{cap.title}</h3>
-              <p className="text-xs text-muted-foreground">{cap.desc}</p>
+              <h3 className="text-sm font-semibold mb-1 text-champagne">{cap.title}</h3>
+              <p className="text-xs text-platinum-dark">{cap.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -195,7 +202,7 @@ Format with clear sections, quantitative metrics where applicable, and specific 
             >
               {/* Domain Selection */}
               <div className="glass-panel p-6">
-                <Label className="mb-4 block text-lg font-semibold">Select Application Domain</Label>
+                <Label className="mb-4 block text-lg font-semibold text-champagne">Select Application Domain</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {applicationDomains.map((d) => (
                     <button
@@ -203,13 +210,13 @@ Format with clear sections, quantitative metrics where applicable, and specific 
                       onClick={() => setDomain(d.id)}
                       className={`p-4 rounded-xl border text-left transition-all ${
                         domain === d.id
-                          ? 'border-violet-500 bg-violet-500/10 shadow-lg shadow-violet-500/10'
-                          : 'border-border bg-muted/30 hover:border-violet-500/50'
+                          ? 'border-gold bg-gold/10 shadow-lg shadow-gold/10'
+                          : 'border-border bg-muted/30 hover:border-gold/50'
                       }`}
                     >
                       <d.icon className={`w-6 h-6 ${d.color} mb-2`} />
-                      <p className="font-medium text-sm">{d.label}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{d.desc}</p>
+                      <p className="font-medium text-sm text-champagne">{d.label}</p>
+                      <p className="text-xs text-platinum-dark mt-1">{d.desc}</p>
                     </button>
                   ))}
                 </div>
