@@ -6,14 +6,15 @@ import { Link } from "react-router-dom";
 export const Footer = () => {
   const footerLinks = {
     platform: [
-      { label: "Features", href: "#features" },
+      { label: "Home", href: "/" },
+      { label: "Features", href: "/#features" },
       { label: "Pricing", href: "/pricing" },
       { label: "Dashboard", href: "/dashboard" },
     ],
     resources: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
-      { label: "Support", href: "#" },
+      { label: "Documentation", href: "/docs" },
+      { label: "API Reference", href: "/api" },
+      { label: "Support", href: "/support" },
     ],
     legal: [
       { label: "Terms of Service", href: "/terms" },
@@ -28,7 +29,10 @@ export const Footer = () => {
           <div className="space-y-4">
             <AibltyLogo />
             <p className="text-sm text-muted-foreground max-w-xs">
-              AI-powered ability for everything. Build, automate, and scale your business with intelligent tools.
+              Autonomous Intelligence Platform. Build, automate, and scale your business with intelligent tools.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              One Command. Infinite Possibilities.
             </p>
           </div>
 
@@ -50,9 +54,9 @@ export const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -75,7 +79,7 @@ export const Footer = () => {
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-muted-foreground">
             <p>© 2024 AIBLTY. All rights reserved.</p>
-            <p className="text-xs mt-1">AIBLTY™ is a trademark of the owner.</p>
+            <p className="text-xs mt-1">AIBLTY™ is a trademark of the owner. All intellectual property protected.</p>
           </div>
           <div className="flex items-center gap-4">
             {[Github, Twitter, Linkedin, Mail].map((Icon, i) => (

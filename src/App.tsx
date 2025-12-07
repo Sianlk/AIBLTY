@@ -13,6 +13,9 @@ import TermsPage from "./pages/Terms";
 import PrivacyPage from "./pages/Privacy";
 import AuthPage from "./pages/Auth";
 import PricingPage from "./pages/Pricing";
+import DocsPage from "./pages/Docs";
+import ApiReferencePage from "./pages/ApiReference";
+import SupportPage from "./pages/Support";
 
 // Dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -24,6 +27,15 @@ import AutomationPage from "./pages/dashboard/Automation";
 import InsightsPage from "./pages/dashboard/Insights";
 import SettingsPage from "./pages/dashboard/Settings";
 import AdminPage from "./pages/dashboard/Admin";
+import QuantumPage from "./pages/dashboard/Quantum";
+import AIWorkforcePage from "./pages/dashboard/AIWorkforce";
+import SocialPage from "./pages/dashboard/Social";
+import ResearchPage from "./pages/dashboard/Research";
+import RevenuePage from "./pages/dashboard/Revenue";
+import IntegrationsPage from "./pages/dashboard/Integrations";
+import SecurityPage from "./pages/dashboard/Security";
+import EvolutionPage from "./pages/dashboard/Evolution";
+import NetworkPage from "./pages/dashboard/Network";
 
 const queryClient = new QueryClient();
 
@@ -38,9 +50,15 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/register" element={<AuthPage />} />
+            <Route path="/forgot-password" element={<AuthPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/api" element={<ApiReferencePage />} />
+            <Route path="/support" element={<SupportPage />} />
 
             {/* Protected Dashboard Routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -51,8 +69,26 @@ const App = () => (
             <Route path="/dashboard/automation" element={<ProtectedRoute><AutomationPage /></ProtectedRoute>} />
             <Route path="/dashboard/insights" element={<ProtectedRoute><InsightsPage /></ProtectedRoute>} />
             <Route path="/dashboard/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            <Route path="/dashboard/quantum" element={<ProtectedRoute><QuantumPage /></ProtectedRoute>} />
+            <Route path="/dashboard/ai-workforce" element={<ProtectedRoute><AIWorkforcePage /></ProtectedRoute>} />
+            <Route path="/dashboard/social" element={<ProtectedRoute><SocialPage /></ProtectedRoute>} />
+            <Route path="/dashboard/research" element={<ProtectedRoute><ResearchPage /></ProtectedRoute>} />
+            <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenuePage /></ProtectedRoute>} />
+            <Route path="/dashboard/integrations" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>} />
+            <Route path="/dashboard/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
+            <Route path="/dashboard/evolution" element={<ProtectedRoute><EvolutionPage /></ProtectedRoute>} />
+            <Route path="/dashboard/network" element={<ProtectedRoute><NetworkPage /></ProtectedRoute>} />
             
             {/* Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/plans" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/modules" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/ai-workforce" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/evolution" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/ledger" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
             <Route path="/dashboard/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
