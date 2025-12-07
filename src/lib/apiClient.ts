@@ -152,6 +152,22 @@ class ApiClient {
     return this.request<any>('/billing/subscription');
   }
 
+  async getPayments(page = 1) {
+    return this.request<any>(`/billing/payments?page=${page}`);
+  }
+
+  async getBillingPortal() {
+    return this.request<any>('/billing/stripe/portal', {
+      method: 'POST',
+    });
+  }
+
+  async cancelSubscription() {
+    return this.request<any>('/billing/subscription/cancel', {
+      method: 'POST',
+    });
+  }
+
   // Admin
   admin = {
     getUsers: (page = 1) => this.request<any>(`/admin/users?page=${page}`),
