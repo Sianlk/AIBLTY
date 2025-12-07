@@ -307,6 +307,87 @@ export async function cancelSubscription(userId: string) {
   return { message: 'Subscription will be canceled at the end of the billing period' };
 }
 
+// Create billing portal session
+export async function createBillingPortal(userId: string) {
+  if (!stripe) {
+    throw new AppError('Stripe not configured', 503);
+  }
+  
+  const subscription = await prisma.subscription.findFirst({
+    where: { userId, status: 'active' },
+  });
+  
+  // Get customer ID from subscription or find by email
+  let customerId: string | null = null;
+  
+  if (subscription?.externalId) {
+    try {
+      const stripeSub = await stripe.subscriptions.retrieve(subscription.externalId);
+      customerId = stripeSub.customer as string;
+    } catch (error) {
+      logger.error('Failed to retrieve Stripe subscription:', error);
+    }
+  }
+  
+  if (!customerId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (user) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+      }
+    }
+  }
+  
+  if (!customerId) {
+    throw new AppError('No billing account found. Please subscribe first.', 404);
+  }
+  
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${process.env.FRONTEND_URL || 'https://aiblty.com'}/dashboard/billing`,
+  });
+  
+  logger.info(`Created billing portal session for user ${userId}`);
+  
+  return { url: session.url };
+}
+
+// Platform commission rate (10% on all transactions)
+const PLATFORM_COMMISSION_RATE = 0.10;
+
+// Create revenue share payment for user-generated products
+export async function createRevenueSharePayment(
+  sellerId: string,
+  amount: number,
+  description: string
+) {
+  // Calculate platform commission (10%)
+  const platformCommission = amount * PLATFORM_COMMISSION_RATE;
+  const sellerAmount = amount - platformCommission;
+
+  logger.info(`Revenue share: Seller gets £${sellerAmount.toFixed(2)}, Platform gets £${platformCommission.toFixed(2)}`);
+
+  // Record the transaction for the seller
+  await prisma.payment.create({
+    data: {
+      userId: sellerId,
+      provider: 'platform',
+      amount: Math.round(sellerAmount * 100), // Store in pence
+      currency: 'GBP',
+      status: 'succeeded',
+      externalId: `rev_share_${Date.now()}`,
+    },
+  });
+
+  return {
+    sellerAmount,
+    platformCommission,
+    totalAmount: amount,
+    commissionRate: `${PLATFORM_COMMISSION_RATE * 100}%`,
+  };
+}
+
 // PayPal integration
 export async function createPaypalOrder(userId: string, plan: 'pro' | 'elite') {
   if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_SECRET) {
