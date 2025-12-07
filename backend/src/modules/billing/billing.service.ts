@@ -356,7 +356,116 @@ export async function createBillingPortal(userId: string) {
 // Platform commission rate (10% on all transactions)
 const PLATFORM_COMMISSION_RATE = 0.10;
 
-// Create revenue share payment for user-generated products
+// AIBLTY Platform Stripe Connect Account (receives 10% commission)
+const PLATFORM_STRIPE_ACCOUNT = env.STRIPE_PLATFORM_ACCOUNT_ID || 'acct_aiblty_platform';
+
+// Create Stripe Connect account for user to receive payouts
+export async function createConnectAccount(userId: string) {
+  if (!stripe) {
+    throw new AppError('Stripe not configured', 503);
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AppError('User not found', 404);
+
+  // Check if user already has a connected account
+  const existingAccount = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { stripeConnectId: true },
+  });
+
+  if (existingAccount?.stripeConnectId) {
+    // Return existing account link
+    const accountLink = await stripe.accountLinks.create({
+      account: existingAccount.stripeConnectId,
+      refresh_url: `${process.env.FRONTEND_URL || 'https://aiblty.com'}/dashboard/billing?connect=refresh`,
+      return_url: `${process.env.FRONTEND_URL || 'https://aiblty.com'}/dashboard/billing?connect=success`,
+      type: 'account_onboarding',
+    });
+    return { url: accountLink.url, accountId: existingAccount.stripeConnectId };
+  }
+
+  // Create new Connect Express account
+  const account = await stripe.accounts.create({
+    type: 'express',
+    email: user.email,
+    capabilities: {
+      card_payments: { requested: true },
+      transfers: { requested: true },
+    },
+    business_type: 'individual',
+    metadata: { userId },
+  });
+
+  // Save Connect account ID
+  await prisma.user.update({
+    where: { id: userId },
+    data: { stripeConnectId: account.id },
+  });
+
+  // Create onboarding link
+  const accountLink = await stripe.accountLinks.create({
+    account: account.id,
+    refresh_url: `${process.env.FRONTEND_URL || 'https://aiblty.com'}/dashboard/billing?connect=refresh`,
+    return_url: `${process.env.FRONTEND_URL || 'https://aiblty.com'}/dashboard/billing?connect=success`,
+    type: 'account_onboarding',
+  });
+
+  logger.info(`Created Stripe Connect account ${account.id} for user ${userId}`);
+
+  return { url: accountLink.url, accountId: account.id };
+}
+
+// Create payment with automatic platform fee (10%)
+export async function createPaymentWithFee(
+  sellerId: string,
+  amount: number, // in pence
+  description: string,
+  buyerEmail?: string
+) {
+  if (!stripe) {
+    throw new AppError('Stripe not configured', 503);
+  }
+
+  const seller = await prisma.user.findUnique({ where: { id: sellerId } });
+  if (!seller?.stripeConnectId) {
+    throw new AppError('Seller has not connected their Stripe account', 400);
+  }
+
+  // Calculate platform fee (10%)
+  const platformFee = Math.round(amount * PLATFORM_COMMISSION_RATE);
+  const sellerAmount = amount - platformFee;
+
+  // Create payment intent with automatic transfer to seller (minus platform fee)
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount,
+    currency: 'gbp',
+    description,
+    receipt_email: buyerEmail,
+    application_fee_amount: platformFee,
+    transfer_data: {
+      destination: seller.stripeConnectId,
+    },
+    metadata: {
+      sellerId,
+      platformFee: platformFee.toString(),
+      sellerAmount: sellerAmount.toString(),
+    },
+  });
+
+  logger.info(`Created payment ${paymentIntent.id}: £${(amount/100).toFixed(2)} total, £${(platformFee/100).toFixed(2)} platform fee`);
+
+  return {
+    clientSecret: paymentIntent.client_secret,
+    paymentIntentId: paymentIntent.id,
+    totalAmount: amount,
+    platformFee,
+    sellerAmount,
+    commissionRate: `${PLATFORM_COMMISSION_RATE * 100}%`,
+  };
+}
+
+// Create revenue share payment for user-generated products (legacy)
 export async function createRevenueSharePayment(
   sellerId: string,
   amount: number,
@@ -386,6 +495,47 @@ export async function createRevenueSharePayment(
     totalAmount: amount,
     commissionRate: `${PLATFORM_COMMISSION_RATE * 100}%`,
   };
+}
+
+// Get Connect account dashboard link
+export async function getConnectDashboardLink(userId: string) {
+  if (!stripe) {
+    throw new AppError('Stripe not configured', 503);
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user?.stripeConnectId) {
+    throw new AppError('No connected account found', 404);
+  }
+
+  const loginLink = await stripe.accounts.createLoginLink(user.stripeConnectId);
+  return { url: loginLink.url };
+}
+
+// Get Connect account status
+export async function getConnectAccountStatus(userId: string) {
+  if (!stripe) {
+    throw new AppError('Stripe not configured', 503);
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user?.stripeConnectId) {
+    return { connected: false, accountId: null };
+  }
+
+  try {
+    const account = await stripe.accounts.retrieve(user.stripeConnectId);
+    return {
+      connected: true,
+      accountId: account.id,
+      chargesEnabled: account.charges_enabled,
+      payoutsEnabled: account.payouts_enabled,
+      detailsSubmitted: account.details_submitted,
+    };
+  } catch (error) {
+    logger.error('Failed to retrieve Connect account:', error);
+    return { connected: false, accountId: null };
+  }
 }
 
 // PayPal integration
