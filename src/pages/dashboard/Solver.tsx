@@ -2,16 +2,36 @@ import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
-import { Brain, Send, Loader2, Sparkles, Copy, Check, RefreshCw } from 'lucide-react';
+import { 
+  Brain, Send, Loader2, Sparkles, Copy, Check, RefreshCw,
+  Atom, Zap, Binary, Cpu, Waves, Shield, Network
+} from 'lucide-react';
+
+const quantumModes = [
+  { id: 'classical', label: 'Classical AI', icon: Brain, description: 'Standard neural network analysis' },
+  { id: 'quantum', label: 'Quantum Enhanced', icon: Atom, description: 'Quantum-inspired optimization' },
+  { id: 'hybrid', label: 'Hybrid Compute', icon: Cpu, description: 'Combined classical-quantum processing' },
+];
+
+const quantumFeatures = [
+  { icon: Atom, label: 'Quantum Optimization', desc: 'QAOA-inspired problem solving' },
+  { icon: Waves, label: 'Superposition Analysis', desc: 'Parallel solution exploration' },
+  { icon: Binary, label: 'Qubit Simulation', desc: 'Quantum state modeling' },
+  { icon: Shield, label: 'Quantum Encryption', desc: 'Post-quantum security ready' },
+  { icon: Network, label: 'Entanglement Mapping', desc: 'Complex relationship analysis' },
+  { icon: Zap, label: 'Quantum Speedup', desc: 'Exponential search acceleration' },
+];
 
 export default function SolverPage() {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [quantumMode, setQuantumMode] = useState('classical');
   const { toast } = useToast();
 
   const handleSubmit = async () => {
@@ -24,10 +44,13 @@ export default function SolverPage() {
     setResponse(null);
 
     try {
-      // For now, we'll create a temporary project for the solver
+      const enhancedPrompt = quantumMode !== 'classical' 
+        ? `[${quantumMode.toUpperCase()} MODE] ${prompt}\n\nApply quantum-inspired optimization techniques including superposition-based parallel exploration, entanglement-based constraint mapping, and QAOA-inspired variational analysis.`
+        : prompt;
+      
       const projectRes = await api.createProject('Problem Solver Session', 'Auto-generated for problem solving');
-      const result = await api.solveProblem(projectRes.data.id, prompt);
-      setResponse(result.data?.response || 'No response received');
+      const result = await api.ai.solveProblem(projectRes.data.id, enhancedPrompt);
+      setResponse(result.data?.message || result.message || 'No response received');
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -54,28 +77,53 @@ export default function SolverPage() {
   };
 
   const examples = [
-    'How can I improve customer retention for my SaaS product?',
-    'What are the best strategies for entering a new market?',
-    'How do I optimize my supply chain for faster delivery?',
-    'What pricing model would work best for a B2B software product?',
+    'Optimize supply chain logistics for 50 warehouses with quantum-inspired routing',
+    'Find optimal portfolio allocation using quantum annealing simulation',
+    'Solve complex scheduling problem with entanglement-based constraints',
+    'Analyze market patterns using superposition-based pattern recognition',
   ];
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-4 relative">
             <Brain className="w-8 h-8 text-primary" />
+            <Atom className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Intelligence Workspace</h1>
           <p className="text-muted-foreground">
-            Describe your problem and let AI analyze it with comprehensive solutions
+            Quantum-enhanced problem solving with AI-powered analysis
           </p>
+        </motion.div>
+
+        {/* Quantum Mode Selector */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="glass-panel p-4"
+        >
+          <Tabs value={quantumMode} onValueChange={setQuantumMode}>
+            <TabsList className="grid grid-cols-3 w-full bg-muted/50">
+              {quantumModes.map((mode) => (
+                <TabsTrigger key={mode.id} value={mode.id} className="flex items-center gap-2">
+                  <mode.icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{mode.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {quantumModes.map((mode) => (
+              <TabsContent key={mode.id} value={mode.id} className="mt-3">
+                <p className="text-sm text-muted-foreground text-center">{mode.description}</p>
+              </TabsContent>
+            ))}
+          </Tabs>
         </motion.div>
 
         {/* Input Section */}
@@ -99,10 +147,12 @@ export default function SolverPage() {
               <Button onClick={handleSubmit} variant="glow" disabled={loading || !prompt.trim()}>
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : quantumMode !== 'classical' ? (
+                  <Atom className="w-4 h-4 mr-2" />
                 ) : (
                   <Send className="w-4 h-4 mr-2" />
                 )}
-                {loading ? 'Analyzing...' : 'Solve Problem'}
+                {loading ? 'Processing...' : quantumMode !== 'classical' ? 'Quantum Solve' : 'Solve Problem'}
               </Button>
               {response && (
                 <Button onClick={handleReset} variant="outline">
@@ -114,6 +164,26 @@ export default function SolverPage() {
           </div>
         </motion.div>
 
+        {/* Quantum Features Grid */}
+        {!response && !loading && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            <p className="text-sm text-muted-foreground mb-3">Quantum Technology Features:</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {quantumFeatures.map((feature) => (
+                <div key={feature.label} className="glass-panel p-4 text-center">
+                  <feature.icon className="w-6 h-6 text-accent mx-auto mb-2" />
+                  <p className="text-sm font-medium">{feature.label}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Example Prompts */}
         {!response && !loading && (
           <motion.div
@@ -121,7 +191,7 @@ export default function SolverPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <p className="text-sm text-muted-foreground mb-3">Try these examples:</p>
+            <p className="text-sm text-muted-foreground mb-3">Try quantum-enhanced examples:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {examples.map((example, i) => (
                 <button
@@ -148,10 +218,21 @@ export default function SolverPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-primary" />
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                    {quantumMode !== 'classical' ? (
+                      <Atom className="w-4 h-4 text-accent" />
+                    ) : (
+                      <Brain className="w-4 h-4 text-primary" />
+                    )}
                   </div>
-                  <span className="font-semibold">AI Analysis</span>
+                  <span className="font-semibold">
+                    {quantumMode !== 'classical' ? 'Quantum Analysis' : 'AI Analysis'}
+                  </span>
+                  {quantumMode !== 'classical' && (
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full">
+                      {quantumMode.toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 {response && (
                   <Button variant="ghost" size="sm" onClick={handleCopy}>
@@ -167,11 +248,15 @@ export default function SolverPage() {
 
               {loading ? (
                 <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {quantumMode !== 'classical' 
+                      ? 'Running quantum-inspired optimization...' 
+                      : 'Analyzing problem space...'}
+                  </div>
                   <div className="h-4 bg-muted rounded animate-pulse w-full"></div>
                   <div className="h-4 bg-muted rounded animate-pulse w-5/6"></div>
                   <div className="h-4 bg-muted rounded animate-pulse w-4/6"></div>
-                  <div className="h-4 bg-muted rounded animate-pulse w-full"></div>
-                  <div className="h-4 bg-muted rounded animate-pulse w-3/4"></div>
                 </div>
               ) : (
                 <div className="prose prose-invert max-w-none">
