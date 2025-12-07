@@ -167,9 +167,9 @@ const Index = () => {
       <main>
         {/* Hero Section - Ultra Premium */}
         <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12 relative">
-          {/* Premium ambient effects */}
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold/8 rounded-full blur-[150px] pointer-events-none" />
-          <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-glow-elite/8 rounded-full blur-[120px] pointer-events-none" />
+          {/* Premium gold ambient effects */}
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold/10 rounded-full blur-[150px] pointer-events-none" />
+          <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-gold-light/8 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold-dark/5 rounded-full blur-[200px] pointer-events-none" />
           
           <motion.div

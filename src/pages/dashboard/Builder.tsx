@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import api from '@/lib/apiClient';
+import { sendAIMessage } from '@/lib/aiService';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Rocket, Send, Loader2, Sparkles, Copy, Check, RefreshCw,
@@ -258,10 +258,17 @@ QUALITY STANDARD: Enterprise-grade, investor-ready, market-dominating.
     setResponse(null);
 
     try {
-      const projectRes = await api.createProject('Genesis Build', businessIdea.slice(0, 100));
-      const result = await api.ai.buildBusiness(projectRes.data.id, fullPrompt);
-      setResponse(result.data?.response || result.data?.message || 'Build specification generated successfully.');
-      toast({ title: 'Genesis Complete', description: 'Your full-stack specification is ready' });
+      const aiResponse = await sendAIMessage(
+        [{ role: 'user', content: fullPrompt }],
+        'builder'
+      );
+      
+      if (aiResponse.success) {
+        setResponse(aiResponse.content);
+        toast({ title: 'Genesis Complete', description: 'Your full-stack specification is ready' });
+      } else {
+        throw new Error(aiResponse.error || 'Failed to generate build specification');
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
