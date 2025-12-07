@@ -143,33 +143,37 @@ const Index = () => {
       <Header />
       
       <main>
-        {/* Hero Section */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12">
+        {/* Hero Section - Ultra Premium */}
+        <section className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-12 relative">
+          {/* Ambient glow effects */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-glow-elite/5 rounded-full blur-[100px] pointer-events-none" />
+          
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="text-center mb-12 relative z-10"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="mb-6"
+              className="mb-8"
             >
-              <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase">
+              <span className="inline-block elite-badge mb-6">
                 Autonomous Intelligence Platform
               </span>
             </motion.div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 font-display">
-              <span className="text-primary glow-text">One Command.</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 font-display tracking-wide">
+              <span className="gradient-text glow-text-strong">One Command.</span>
               <br />
               <span className="text-foreground">Infinite Possibilities.</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-platinum max-w-3xl mx-auto leading-relaxed font-elegant">
               Transform ideas into production-ready applications, businesses, and revenue streams.
-              <span className="text-gold-light font-semibold"> AIBLTY</span> handles architecture, code, deployment, and everything in between.
+              <span className="text-champagne font-semibold"> AIBLTY</span> — the ultimate AI ability — handles architecture, code, deployment, and everything in between.
             </p>
           </motion.div>
 
@@ -178,15 +182,15 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="mb-6 text-center"
+            className="mb-8 text-center"
           >
-            <p className="text-sm text-muted-foreground mb-2">Build an AI-powered business that...</p>
+            <p className="text-sm text-platinum-dark mb-3 font-elegant italic">Build an AI-powered business that...</p>
             <motion.p
               key={currentExample}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="text-primary font-medium"
+              className="text-champagne font-medium text-lg"
             >
               "{examplePrompts[currentExample]}"
             </motion.p>
@@ -194,12 +198,12 @@ const Index = () => {
 
           <CommandInput onSubmit={handleCommand} isProcessing={isProcessing} placeholder="Build an AI-powered business that..." />
 
-          {/* Stats */}
+          {/* Stats - Premium Style */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
+            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16"
           >
             {stats.map((stat, i) => (
               <motion.div
@@ -207,10 +211,12 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9 + i * 0.1 }}
-                className="text-center"
+                className="text-center relative"
               >
-                <div className="text-3xl md:text-4xl font-bold text-gold-light glow-text mb-1">{stat.value}</div>
-                <div className="text-xs font-mono text-platinum uppercase tracking-wider">{stat.label}</div>
+                <div className="text-4xl md:text-5xl font-bold gradient-text font-display mb-2">{stat.value}</div>
+                <div className="text-xs font-mono text-platinum-dark uppercase tracking-[0.2em]">{stat.label}</div>
+                {/* Decorative line */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
               </motion.div>
             ))}
           </motion.div>
