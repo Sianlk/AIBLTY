@@ -16,7 +16,8 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        display: ['Playfair Display', 'serif'],
+        display: ['Cinzel', 'serif'],
+        elegant: ['Cormorant Garamond', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -52,21 +53,36 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Ultra Premium Gold Palette
         gold: {
           DEFAULT: "hsl(var(--gold))",
           light: "hsl(var(--gold-light))",
+          bright: "hsl(var(--gold-bright))",
           dark: "hsl(var(--gold-dark))",
+          deep: "hsl(var(--gold-deep))",
           muted: "hsl(var(--gold-muted))",
         },
-        champagne: "hsl(var(--champagne))",
-        obsidian: "hsl(var(--obsidian))",
-        platinum: "hsl(var(--platinum))",
+        champagne: {
+          DEFAULT: "hsl(var(--champagne))",
+          dark: "hsl(var(--champagne-dark))",
+        },
+        obsidian: {
+          DEFAULT: "hsl(var(--obsidian))",
+          light: "hsl(var(--obsidian-light))",
+        },
+        platinum: {
+          DEFAULT: "hsl(var(--platinum))",
+          dark: "hsl(var(--platinum-dark))",
+        },
+        bronze: "hsl(var(--bronze))",
+        copper: "hsl(var(--copper))",
         glow: {
           gold: "hsl(var(--glow-gold))",
           secondary: "hsl(var(--glow-secondary))",
           success: "hsl(var(--glow-success))",
           warning: "hsl(var(--glow-warning))",
           elite: "hsl(var(--glow-elite))",
+          quantum: "hsl(var(--glow-quantum))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -110,8 +126,12 @@ export default {
           "100%": { opacity: "1" },
         },
         "shimmer": {
-          "0%": { backgroundPosition: "300% 0" },
-          "100%": { backgroundPosition: "-300% 0" },
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
+        "text-shimmer": {
+          "0%, 100%": { backgroundPosition: "0% center" },
+          "50%": { backgroundPosition: "100% center" },
         },
       },
       animation: {
@@ -121,7 +141,8 @@ export default {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "slide-up": "slide-up 0.5s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
-        "shimmer": "shimmer 4s ease-in-out infinite",
+        "shimmer": "shimmer 5s ease-in-out infinite",
+        "text-shimmer": "text-shimmer 4s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
