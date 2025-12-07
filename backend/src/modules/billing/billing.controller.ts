@@ -11,6 +11,15 @@ export async function createStripeCheckout(req: Request, res: Response, next: Ne
   }
 }
 
+export async function createBillingPortal(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await billingService.createBillingPortal(req.user!.userId);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function handleStripeWebhook(req: Request, res: Response, next: NextFunction) {
   try {
     const signature = req.headers['stripe-signature'] as string;
@@ -35,6 +44,15 @@ export async function getPaymentHistory(req: Request, res: Response, next: NextF
     const page = parseInt(req.query.page as string) || 1;
     const result = await billingService.getPaymentHistory(req.user!.userId, page);
     res.json({ success: true, ...result });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function cancelSubscription(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await billingService.cancelSubscription(req.user!.userId);
+    res.json({ success: true, data: result });
   } catch (error) {
     next(error);
   }

@@ -9,8 +9,10 @@ router.post('/stripe/webhook', billingController.handleStripeWebhook);
 
 // Protected routes
 router.post('/stripe/checkout', authMiddleware, billingController.createStripeCheckout);
+router.post('/stripe/portal', authMiddleware, billingController.createBillingPortal);
 router.get('/subscription', authMiddleware, billingController.getSubscription);
 router.get('/payments', authMiddleware, billingController.getPaymentHistory);
+router.post('/subscription/cancel', authMiddleware, billingController.cancelSubscription);
 
 // PayPal
 router.post('/paypal/create', authMiddleware, billingController.createPaypalOrder);

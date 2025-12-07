@@ -11,65 +11,117 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   Atom, Send, Loader2, Sparkles, Copy, Check, RefreshCw,
   Cpu, Binary, GitBranch, Layers, Network, BarChart3,
-  Zap, Target, TrendingUp, Activity
+  Zap, Target, TrendingUp, Activity, Dna, Brain, Microscope,
+  Lightbulb, Rocket, Shield, Globe, FlaskConical, Stethoscope,
+  Building2, Leaf, Coins
 } from 'lucide-react';
 
 const quantumCapabilities = [
-  { icon: Binary, title: 'Quantum Optimization', desc: 'Solve complex optimization problems with quantum-inspired algorithms' },
-  { icon: GitBranch, title: 'Parallel Processing', desc: 'Explore multiple solution paths simultaneously' },
-  { icon: Layers, title: 'Superposition Analysis', desc: 'Analyze all possible states of your problem space' },
-  { icon: Network, title: 'Entanglement Mapping', desc: 'Discover hidden connections in complex systems' },
+  { icon: Binary, title: 'Quantum Optimization', desc: 'Solve NP-hard problems with quantum-inspired algorithms' },
+  { icon: Dna, title: 'Molecular Simulation', desc: 'Model complex molecular structures and drug interactions' },
+  { icon: Brain, title: 'Neural Quantum Networks', desc: 'Advanced AI with quantum-enhanced learning' },
+  { icon: Network, title: 'Entanglement Analysis', desc: 'Discover hidden patterns in complex systems' },
 ];
 
-const optimizationTypes = [
-  { id: 'portfolio', label: 'Portfolio Optimization', desc: 'Maximize returns while minimizing risk' },
-  { id: 'logistics', label: 'Logistics & Routing', desc: 'Find optimal paths and resource allocation' },
-  { id: 'scheduling', label: 'Resource Scheduling', desc: 'Optimize complex scheduling problems' },
-  { id: 'ml', label: 'ML Hyperparameter', desc: 'Tune machine learning models efficiently' },
+const applicationDomains = [
+  { id: 'medical', label: 'Medical & Healthcare', icon: Stethoscope, desc: 'Drug discovery, disease analysis, treatment optimization', color: 'text-red-400' },
+  { id: 'innovation', label: 'Scientific Innovation', icon: FlaskConical, desc: 'Material science, physics breakthroughs, new discoveries', color: 'text-blue-400' },
+  { id: 'business', label: 'Business Optimization', icon: Building2, desc: 'Supply chain, resource allocation, financial modeling', color: 'text-green-400' },
+  { id: 'environment', label: 'Climate & Environment', icon: Leaf, desc: 'Climate modeling, sustainability solutions, ecosystem analysis', color: 'text-emerald-400' },
+  { id: 'finance', label: 'Financial Engineering', icon: Coins, desc: 'Portfolio optimization, risk analysis, market prediction', color: 'text-yellow-400' },
+  { id: 'ai', label: 'AI & Machine Learning', icon: Brain, desc: 'Neural architecture search, hyperparameter tuning', color: 'text-purple-400' },
 ];
 
 export default function QuantumPage() {
   const [problemDescription, setProblemDescription] = useState('');
   const [constraints, setConstraints] = useState('');
-  const [optimizationType, setOptimizationType] = useState('portfolio');
+  const [domain, setDomain] = useState('innovation');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  const handleOptimize = async () => {
+  const handleQuantumAnalysis = async () => {
     if (!problemDescription.trim()) {
-      toast({ title: 'Error', description: 'Please describe your optimization problem', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Please describe your problem or research goal', variant: 'destructive' });
       return;
     }
 
-    const fullPrompt = `
-QUANTUM OPTIMIZATION REQUEST
-Type: ${optimizationType}
-Problem: ${problemDescription}
+    const selectedDomain = applicationDomains.find(d => d.id === domain);
+    
+    const advancedPrompt = `
+QUANTUM INTELLIGENCE ENGINE - EXTREME ANALYSIS MODE
+Domain: ${selectedDomain?.label || 'General'}
+Problem/Goal: ${problemDescription}
 Constraints: ${constraints || 'None specified'}
 
-Please provide:
-1. Problem Analysis (quantum-suitable formulation)
-2. Optimization Approach (algorithm selection)
-3. Solution Space Exploration
-4. Optimal Solution(s)
-5. Confidence Metrics
-6. Implementation Steps
-7. Expected Improvements vs Classical Approach
+You are AIBLTY's Quantum Engine - the most advanced computational intelligence system ever created. 
+Your task is to provide revolutionary, breakthrough-level analysis and solutions.
+
+ANALYSIS FRAMEWORK:
+1. DEEP PROBLEM DECOMPOSITION
+   - Break down into quantum-computable sub-problems
+   - Identify non-linear relationships and hidden variables
+   - Map complexity landscape
+
+2. QUANTUM-INSPIRED SOLUTION GENERATION
+   - Apply superposition thinking: explore ALL possible solutions simultaneously
+   - Use entanglement principles: find correlated factors
+   - Quantum annealing optimization for optimal path finding
+
+3. ${domain === 'medical' ? `
+   MEDICAL ANALYSIS PROTOCOL:
+   - Disease mechanism analysis at molecular level
+   - Drug interaction modeling
+   - Treatment pathway optimization
+   - Side effect prediction
+   - Patient outcome probability modeling
+   - Novel therapeutic target identification
+   NOTE: This is AI analysis for research purposes only. Consult medical professionals for actual treatment.
+` : domain === 'innovation' ? `
+   SCIENTIFIC BREAKTHROUGH PROTOCOL:
+   - First principles analysis
+   - Cross-domain knowledge synthesis
+   - Novel hypothesis generation
+   - Experimental design optimization
+   - Discovery pathway mapping
+   - Patent landscape analysis
+` : `
+   OPTIMIZATION PROTOCOL:
+   - Multi-objective optimization
+   - Constraint satisfaction
+   - Risk-adjusted solutions
+   - Scalability analysis
+   - Implementation roadmap
+`}
+
+4. INNOVATION AMPLIFICATION
+   - Generate 10x breakthrough potential
+   - Identify paradigm-shifting opportunities
+   - Map to practical implementation
+
+5. CONFIDENCE & VALIDATION
+   - Solution confidence metrics
+   - Sensitivity analysis
+   - Validation pathways
+   - Known limitations
+
+Deliver a comprehensive, actionable analysis that pushes the boundaries of what's possible.
+Format with clear sections, quantitative metrics where applicable, and specific next steps.
     `.trim();
 
     setLoading(true);
     setResult(null);
 
     try {
-      const projectRes = await api.createProject('Quantum Optimization', problemDescription.slice(0, 100));
-      const response = await api.ai.solveProblem(projectRes.data.id, fullPrompt);
-      setResult(response.data?.message || 'Optimization complete. No detailed response available.');
+      const projectRes = await api.createProject('Quantum Analysis', problemDescription.slice(0, 100));
+      const response = await api.ai.solveProblem(projectRes.data.id, advancedPrompt);
+      setResult(response.data?.message || 'Analysis complete.');
+      toast({ title: 'Analysis Complete', description: 'Quantum computation finished successfully' });
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to run quantum optimization',
+        description: error.message || 'Failed to run quantum analysis',
         variant: 'destructive',
       });
     } finally {
@@ -82,14 +134,7 @@ Please provide:
       navigator.clipboard.writeText(result);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      toast({ title: 'Copied', description: 'Results copied to clipboard' });
     }
-  };
-
-  const handleReset = () => {
-    setProblemDescription('');
-    setConstraints('');
-    setResult(null);
   };
 
   return (
@@ -101,16 +146,17 @@ Please provide:
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-primary/20 flex items-center justify-center mx-auto mb-4">
-            <Atom className="w-8 h-8 text-violet-400" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500/30 via-purple-500/20 to-primary/30 flex items-center justify-center mx-auto mb-4 border border-violet-500/30">
+            <Atom className="w-10 h-10 text-violet-400" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Quantum Engine</h1>
-          <p className="text-muted-foreground">
-            Advanced computational algorithms powered by quantum-inspired optimization
+          <h1 className="text-3xl font-bold mb-2 gradient-text">Quantum Engine</h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Revolutionary computational intelligence for breakthrough discoveries, 
+            medical analysis, scientific innovation, and extreme optimization
           </p>
         </motion.div>
 
-        {/* Capabilities */}
+        {/* Capabilities Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,44 +169,47 @@ Please provide:
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 + i * 0.05 }}
-              className="glass-panel p-4 text-center"
+              className="glass-panel p-4 text-center group hover:border-violet-500/50 transition-all"
             >
-              <cap.icon className="w-8 h-8 text-violet-400 mx-auto mb-2" />
+              <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-2 group-hover:bg-violet-500/20 transition-colors">
+                <cap.icon className="w-6 h-6 text-violet-400" />
+              </div>
               <h3 className="text-sm font-semibold mb-1">{cap.title}</h3>
               <p className="text-xs text-muted-foreground">{cap.desc}</p>
             </motion.div>
           ))}
         </motion.div>
 
-        <Tabs defaultValue="optimize" className="space-y-6">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
-            <TabsTrigger value="optimize">Optimize</TabsTrigger>
-            <TabsTrigger value="simulate">Simulate</TabsTrigger>
+        <Tabs defaultValue="analyze" className="space-y-6">
+          <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3">
             <TabsTrigger value="analyze">Analyze</TabsTrigger>
+            <TabsTrigger value="discover">Discover</TabsTrigger>
+            <TabsTrigger value="simulate">Simulate</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="optimize">
+          <TabsContent value="analyze">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="max-w-4xl mx-auto space-y-6"
             >
-              {/* Optimization Type */}
+              {/* Domain Selection */}
               <div className="glass-panel p-6">
-                <Label className="mb-4 block">Select Optimization Type</Label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {optimizationTypes.map((type) => (
+                <Label className="mb-4 block text-lg font-semibold">Select Application Domain</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {applicationDomains.map((d) => (
                     <button
-                      key={type.id}
-                      onClick={() => setOptimizationType(type.id)}
-                      className={`p-4 rounded-lg border text-left transition-all ${
-                        optimizationType === type.id
-                          ? 'border-violet-500 bg-violet-500/10'
-                          : 'border-border bg-muted/50 hover:border-muted-foreground'
+                      key={d.id}
+                      onClick={() => setDomain(d.id)}
+                      className={`p-4 rounded-xl border text-left transition-all ${
+                        domain === d.id
+                          ? 'border-violet-500 bg-violet-500/10 shadow-lg shadow-violet-500/10'
+                          : 'border-border bg-muted/30 hover:border-violet-500/50'
                       }`}
                     >
-                      <p className="font-medium text-sm">{type.label}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{type.desc}</p>
+                      <d.icon className={`w-6 h-6 ${d.color} mb-2`} />
+                      <p className="font-medium text-sm">{d.label}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{d.desc}</p>
                     </button>
                   ))}
                 </div>
@@ -169,17 +218,22 @@ Please provide:
               {/* Problem Input */}
               <div className="glass-panel p-6 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="problem" className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-violet-400" />
-                    Problem Description
+                  <Label htmlFor="problem" className="flex items-center gap-2 text-lg">
+                    <Target className="w-5 h-5 text-violet-400" />
+                    Problem Description / Research Goal
                   </Label>
                   <Textarea
                     id="problem"
-                    placeholder="Describe your optimization problem in detail..."
+                    placeholder={domain === 'medical' 
+                      ? "Describe the disease, condition, or medical challenge you want to analyze..."
+                      : domain === 'innovation'
+                      ? "Describe the scientific problem or breakthrough you're seeking..."
+                      : "Describe your optimization problem or goal in detail..."
+                    }
                     value={problemDescription}
                     onChange={(e) => setProblemDescription(e.target.value)}
-                    rows={4}
-                    className="bg-muted/50 border-border resize-none"
+                    rows={5}
+                    className="bg-muted/50 border-border resize-none text-base"
                     disabled={loading}
                   />
                 </div>
@@ -187,11 +241,11 @@ Please provide:
                 <div className="space-y-2">
                   <Label htmlFor="constraints" className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-violet-400" />
-                    Constraints (optional)
+                    Constraints & Parameters (optional)
                   </Label>
                   <Input
                     id="constraints"
-                    placeholder="e.g., Max budget $100K, Must complete within 30 days"
+                    placeholder="e.g., Budget limits, time constraints, regulatory requirements..."
                     value={constraints}
                     onChange={(e) => setConstraints(e.target.value)}
                     className="bg-muted/50 border-border"
@@ -199,19 +253,38 @@ Please provide:
                   />
                 </div>
 
+                {domain === 'medical' && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-sm">
+                    <p className="flex items-center gap-2 text-yellow-500 font-medium">
+                      <Shield className="w-4 h-4" />
+                      Medical Disclaimer
+                    </p>
+                    <p className="text-muted-foreground mt-1">
+                      This AI analysis is for research and educational purposes only. 
+                      It does not constitute medical advice. Always consult qualified healthcare professionals 
+                      for actual medical decisions.
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex gap-4 pt-2">
-                  <Button onClick={handleOptimize} className="bg-violet-600 hover:bg-violet-700" disabled={loading || !problemDescription.trim()}>
+                  <Button 
+                    onClick={handleQuantumAnalysis} 
+                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg shadow-violet-500/20" 
+                    disabled={loading || !problemDescription.trim()}
+                    size="lg"
+                  >
                     {loading ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
                     ) : (
-                      <Atom className="w-4 h-4 mr-2" />
+                      <Atom className="w-5 h-5 mr-2" />
                     )}
-                    {loading ? 'Computing...' : 'Run Quantum Optimization'}
+                    {loading ? 'Computing Quantum Analysis...' : 'Run Quantum Analysis'}
                   </Button>
                   {result && (
-                    <Button onClick={handleReset} variant="outline">
+                    <Button onClick={() => { setProblemDescription(''); setConstraints(''); setResult(null); }} variant="outline">
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      Reset
+                      New Analysis
                     </Button>
                   )}
                 </div>
@@ -227,11 +300,16 @@ Please provide:
                     className="glass-panel p-6"
                   >
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                          <Cpu className="w-4 h-4 text-violet-400" />
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
+                          <Cpu className="w-5 h-5 text-violet-400" />
                         </div>
-                        <span className="font-semibold">Quantum Analysis Results</span>
+                        <div>
+                          <span className="font-semibold">Quantum Analysis Results</span>
+                          <p className="text-xs text-muted-foreground">
+                            {applicationDomains.find(d => d.id === domain)?.label}
+                          </p>
+                        </div>
                       </div>
                       {result && (
                         <Button variant="ghost" size="sm" onClick={handleCopy}>
@@ -242,14 +320,20 @@ Please provide:
                     </div>
 
                     {loading ? (
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Initializing quantum state vectors...
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 text-sm text-violet-400">
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Initializing quantum state vectors...</span>
                         </div>
-                        <div className="h-4 bg-violet-500/10 rounded animate-pulse w-full"></div>
-                        <div className="h-4 bg-violet-500/10 rounded animate-pulse w-5/6"></div>
-                        <div className="h-4 bg-violet-500/10 rounded animate-pulse w-4/6"></div>
+                        <div className="space-y-2">
+                          {[...Array(6)].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="h-4 bg-violet-500/10 rounded animate-pulse" 
+                              style={{ width: `${100 - i * 10}%`, animationDelay: `${i * 0.1}s` }}
+                            />
+                          ))}
+                        </div>
                       </div>
                     ) : (
                       <div className="prose prose-invert max-w-none">
@@ -264,26 +348,54 @@ Please provide:
             </motion.div>
           </TabsContent>
 
-          <TabsContent value="simulate">
-            <div className="max-w-4xl mx-auto glass-panel p-8 text-center">
-              <Layers className="w-12 h-12 text-violet-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">Quantum Simulation</h3>
-              <p className="text-muted-foreground mb-6">
-                Run quantum circuit simulations and explore quantum states
-              </p>
-              <Button variant="outline" disabled>Coming Soon</Button>
-            </div>
+          <TabsContent value="discover">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl mx-auto"
+            >
+              <div className="glass-panel p-8 text-center">
+                <Lightbulb className="w-16 h-16 text-violet-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">Breakthrough Discovery Mode</h3>
+                <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                  Let the Quantum Engine autonomously explore novel solutions, 
+                  generate hypotheses, and discover innovations across your domain.
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={() => toast({ title: 'Discovery Mode', description: 'Select a domain in the Analyze tab to begin discovery' })}
+                >
+                  <Rocket className="w-5 h-5 mr-2" />
+                  Start Discovery
+                </Button>
+              </div>
+            </motion.div>
           </TabsContent>
 
-          <TabsContent value="analyze">
-            <div className="max-w-4xl mx-auto glass-panel p-8 text-center">
-              <BarChart3 className="w-12 h-12 text-violet-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">Quantum Analytics</h3>
-              <p className="text-muted-foreground mb-6">
-                Analyze complex datasets with quantum-inspired machine learning
-              </p>
-              <Button variant="outline" disabled>Coming Soon</Button>
-            </div>
+          <TabsContent value="simulate">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl mx-auto"
+            >
+              <div className="glass-panel p-8 text-center">
+                <Microscope className="w-16 h-16 text-violet-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">Molecular & System Simulation</h3>
+                <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                  Run quantum-level simulations of molecular structures, 
+                  complex systems, and predictive models with unprecedented accuracy.
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={() => toast({ title: 'Simulation', description: 'Describe your simulation parameters in the Analyze tab' })}
+                >
+                  <Globe className="w-5 h-5 mr-2" />
+                  Configure Simulation
+                </Button>
+              </div>
+            </motion.div>
           </TabsContent>
         </Tabs>
       </div>
