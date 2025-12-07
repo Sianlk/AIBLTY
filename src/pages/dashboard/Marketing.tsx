@@ -15,7 +15,7 @@ import {
   Twitter, Linkedin, Instagram, Facebook, Youtube, Sparkles,
   Rocket, ArrowRight, CheckCircle, Play, Pause, Settings,
   RefreshCw, Eye, Heart, MessageCircle, Repeat2, DollarSign,
-  PieChart, Activity, Bot, Loader2, Plus
+  PieChart, Activity, Bot, Loader2, Plus as PlusIcon
 } from 'lucide-react';
 
 interface Campaign {
@@ -284,7 +284,7 @@ export default function MarketingPage() {
                   Marketing Automation Rules
                 </h3>
                 <Button variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <PlusIcon className="w-4 h-4 mr-2" />
                   Add Rule
                 </Button>
               </div>
