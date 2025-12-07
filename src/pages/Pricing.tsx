@@ -13,14 +13,14 @@ import { useNavigate } from 'react-router-dom';
 const plans = [
   {
     name: 'Free',
-    price: '$0',
-    period: 'forever',
+    price: '£0',
+    period: '/month',
     description: 'Get started with AI-powered tools',
     icon: Zap,
     features: [
-      '3 projects',
-      '100 AI queries/month',
-      'Basic problem solver',
+      '5 AI queries/day',
+      '1 Project',
+      'Basic Problem Solver',
       'Community support',
       'Standard response time',
     ],
@@ -30,18 +30,19 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$29',
+    price: '£49',
     period: '/month',
     description: 'For professionals and growing teams',
     icon: Rocket,
     features: [
-      'Unlimited projects',
-      '2,000 AI queries/month',
-      'Advanced problem solver',
-      'Business builder access',
-      'Automation engine',
+      'Unlimited AI queries (fair use)',
+      '10 Projects',
+      'All AI Tools',
+      'Business Builder',
+      'Automation Engine',
+      'Research Engine',
+      'Integration Hub',
       'Priority support',
-      'API access',
     ],
     cta: 'Upgrade to Pro',
     popular: true,
@@ -49,19 +50,20 @@ const plans = [
   },
   {
     name: 'Elite',
-    price: '$99',
+    price: '£199',
     period: '/month',
     description: 'Maximum power for enterprises',
     icon: Crown,
     features: [
       'Everything in Pro',
-      'Unlimited AI queries',
-      'Custom AI models',
-      'White-label options',
+      'Unlimited Projects',
+      'AI Workforce',
+      'Quantum Engine',
+      'White-label exports',
       'Dedicated support',
+      'API access',
       'Custom integrations',
       'SLA guarantee',
-      'Advanced analytics',
     ],
     cta: 'Go Elite',
     popular: false,
@@ -120,11 +122,14 @@ export default function PricingPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
+            <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase mb-4 block">
+              Simple Pricing
+            </span>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="gradient-text">Simple Pricing</span>
+              <span className="gradient-text">Choose Your Power Level</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Choose the plan that fits your needs. Upgrade anytime as you grow.
+              All prices in pounds sterling. Start free, scale infinitely.
             </p>
           </motion.div>
 

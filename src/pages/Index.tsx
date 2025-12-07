@@ -12,30 +12,30 @@ import {
   Building2, Search, Sparkles, DollarSign, Plug, Shield,
   Cpu, Globe, Users, Lock, Server, Terminal, Code, Database,
   Atom, Layers, Network, LineChart, Bot, Wand2, ArrowRight,
-  Check, ChevronRight
+  Check, ChevronRight, Blocks, ShoppingCart, LayoutDashboard, PieChart
 } from "lucide-react";
 
 const modules = [
-  { icon: Rocket, title: "App Generator", description: "One-click full-stack apps with complete architecture and deployment", status: "active" },
-  { icon: Brain, title: "Intelligence Workspace", description: "Universal problem analysis with AI-powered solutions", status: "active" },
-  { icon: Building2, title: "Business Builder", description: "Complete business models, pricing, and go-to-market strategies", status: "active" },
-  { icon: Search, title: "Research Engine", description: "Deep research across science, tech, economics, and more", status: "active" },
-  { icon: DollarSign, title: "Revenue Suite", description: "Automated monetization, pricing strategies, and revenue optimization", status: "active" },
-  { icon: Zap, title: "Automation Engine", description: "Intelligent workflow automation and process optimization", status: "active" },
-  { icon: Plug, title: "Integration Hub", description: "Pre-built connections to Stripe, Google, Notion, and 100+ services", status: "active" },
-  { icon: Bot, title: "AI Workforce", description: "Autonomous agents for research, writing, SEO, and operations", status: "active" },
-  { icon: Atom, title: "Quantum Engine", description: "Advanced computational algorithms and optimization", status: "ready" },
-  { icon: Shield, title: "Security Layer", description: "Document hashing, timestamps, and IP validation", status: "ready" },
-  { icon: Sparkles, title: "Evolution Layer", description: "Self-learning system that adapts to your patterns", status: "coming" },
-  { icon: Network, title: "Global Network", description: "Distributed infrastructure for worldwide deployment", status: "ready" },
+  { icon: Rocket, title: "App Generator", description: "One-click full-stack apps with complete architecture and deployment", status: "active", href: "/dashboard/builder" },
+  { icon: Brain, title: "Intelligence Workspace", description: "Universal problem analysis with AI-powered solutions", status: "active", href: "/dashboard/solver" },
+  { icon: Building2, title: "Business Builder", description: "Complete business models, pricing, and go-to-market strategies", status: "active", href: "/dashboard/builder" },
+  { icon: Search, title: "Research Engine", description: "Deep research across science, tech, economics, and more", status: "active", href: "/dashboard/research" },
+  { icon: DollarSign, title: "Revenue Suite", description: "Automated monetisation, pricing strategies, and revenue optimisation", status: "active", href: "/dashboard/revenue" },
+  { icon: Zap, title: "Automation Engine", description: "Intelligent workflow automation and process optimisation", status: "active", href: "/dashboard/automation" },
+  { icon: Plug, title: "Integration Hub", description: "Pre-built connections to Stripe, Google, Notion, and 100+ services", status: "active", href: "/dashboard/integrations" },
+  { icon: Bot, title: "AI Workforce", description: "Autonomous agents for research, writing, SEO, and operations", status: "active", href: "/dashboard/ai-workforce" },
+  { icon: Atom, title: "Quantum Engine", description: "Advanced computational algorithms and quantum-inspired optimisation", status: "active", href: "/dashboard/quantum" },
+  { icon: Shield, title: "Security Layer", description: "Blockchain-style ledger, document hashing, and IP validation", status: "active", href: "/dashboard/security" },
+  { icon: Sparkles, title: "Evolution Layer", description: "Self-learning system that adapts to your patterns", status: "active", href: "/dashboard/evolution" },
+  { icon: Network, title: "Global Network", description: "Distributed infrastructure for worldwide deployment", status: "active", href: "/dashboard/network" },
 ];
 
 const capabilities = [
   { icon: Code, title: "Production-Ready Code", desc: "Complete, modular, scalable codebases" },
-  { icon: Database, title: "Data Architecture", desc: "Optimized schemas and relationships" },
+  { icon: Database, title: "Data Architecture", desc: "Optimised schemas and relationships" },
   { icon: Server, title: "Backend Systems", desc: "APIs, auth, and server logic" },
   { icon: Layers, title: "Frontend UI/UX", desc: "Beautiful, responsive interfaces" },
-  { icon: LineChart, title: "Business Strategy", desc: "Monetization and growth plans" },
+  { icon: LineChart, title: "Business Strategy", desc: "Monetisation and growth plans" },
   { icon: Globe, title: "Deploy Anywhere", desc: "One-click to production" },
 ];
 
@@ -49,7 +49,7 @@ const stats = [
 const pricingPlans = [
   {
     name: "Free",
-    price: "$0",
+    price: "£0",
     period: "/month",
     description: "Get started with core AI tools",
     features: ["5 AI queries/day", "1 Project", "Basic Problem Solver", "Community support"],
@@ -58,7 +58,7 @@ const pricingPlans = [
   },
   {
     name: "Pro",
-    price: "$49",
+    price: "£49",
     period: "/month",
     description: "For serious builders and entrepreneurs",
     features: ["Unlimited AI queries", "10 Projects", "All AI Tools", "Business Builder", "Automation Engine", "Priority support"],
@@ -67,7 +67,7 @@ const pricingPlans = [
   },
   {
     name: "Elite",
-    price: "$199",
+    price: "£199",
     period: "/month",
     description: "Maximum power for scaling ventures",
     features: ["Everything in Pro", "Unlimited Projects", "AI Workforce", "Quantum Engine", "White-label exports", "Dedicated support", "API access"],
@@ -91,11 +91,19 @@ const terminalLines = [
   { type: "success", text: "★ APPLICATION READY FOR LAUNCH" },
 ];
 
+const examplePrompts = [
+  "Build a task management app with AI prioritisation",
+  "Create an e-commerce platform with Stripe integration",
+  "Design a social media dashboard with analytics",
+  "Generate a portfolio website with CMS",
+];
+
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [visibleLines, setVisibleLines] = useState(0);
+  const [currentExample, setCurrentExample] = useState(0);
 
   useEffect(() => {
     if (visibleLines < terminalLines.length) {
@@ -103,6 +111,13 @@ const Index = () => {
       return () => clearTimeout(timer);
     }
   }, [visibleLines]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentExample(prev => (prev + 1) % examplePrompts.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCommand = async (command: string) => {
     setIsProcessing(true);
@@ -152,10 +167,29 @@ const Index = () => {
               <span className="text-foreground">Infinite Possibilities.</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Transform ideas into production-ready applications, businesses, and revenue streams.
               <span className="text-primary"> AIBLTY</span> handles architecture, code, deployment, and everything in between.
             </p>
+          </motion.div>
+
+          {/* Example Prompts Rotation */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mb-6 text-center"
+          >
+            <p className="text-sm text-muted-foreground mb-2">Build an AI-powered business that...</p>
+            <motion.p
+              key={currentExample}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-primary font-medium"
+            >
+              "{examplePrompts[currentExample]}"
+            </motion.p>
           </motion.div>
 
           <CommandInput onSubmit={handleCommand} isProcessing={isProcessing} placeholder="Build an AI-powered business that..." />
@@ -294,19 +328,20 @@ const Index = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  className="glass-panel-hover p-6 relative group"
                 >
-                  <module.icon className="w-10 h-10 text-primary mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">{module.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{module.description}</p>
-                  <span className={`inline-block text-xs px-2 py-1 rounded ${
-                    module.status === 'active' ? 'bg-primary/20 text-primary' : 
-                    module.status === 'ready' ? 'bg-emerald-500/20 text-emerald-400' :
-                    'bg-muted text-muted-foreground'
-                  }`}>
-                    {module.status === 'active' ? 'Available' : module.status === 'ready' ? 'Ready' : 'Coming Soon'}
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-primary absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Link to={module.href} className="block glass-panel-hover p-6 relative group h-full">
+                    <module.icon className="w-10 h-10 text-primary mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">{module.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{module.description}</p>
+                    <span className={`inline-block text-xs px-2 py-1 rounded ${
+                      module.status === 'active' ? 'bg-primary/20 text-primary' : 
+                      module.status === 'ready' ? 'bg-emerald-500/20 text-emerald-400' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {module.status === 'active' ? 'Available' : module.status === 'ready' ? 'Ready' : 'Coming Soon'}
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-primary absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                 </motion.div>
               ))}
             </div>
@@ -393,7 +428,7 @@ const Index = () => {
                 <Link to="/auth">
                   <Button size="lg" variant="glow">
                     Get Started Free
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/pricing">
