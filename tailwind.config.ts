@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        display: ['Playfair Display', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,11 +52,20 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          light: "hsl(var(--gold-light))",
+          dark: "hsl(var(--gold-dark))",
+        },
+        champagne: "hsl(var(--champagne))",
+        obsidian: "hsl(var(--obsidian))",
+        platinum: "hsl(var(--platinum))",
         glow: {
-          primary: "hsl(var(--glow-primary))",
+          gold: "hsl(var(--glow-gold))",
           secondary: "hsl(var(--glow-secondary))",
           success: "hsl(var(--glow-success))",
           warning: "hsl(var(--glow-warning))",
+          elite: "hsl(var(--glow-elite))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -98,6 +108,10 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "shimmer": {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -106,10 +120,13 @@ export default {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "slide-up": "slide-up 0.5s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
+        "shimmer": "shimmer 3s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "grid-pattern": "linear-gradient(hsl(var(--grid-color)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--grid-color)) 1px, transparent 1px)",
+        "gradient-gold": "linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%)",
+        "gradient-premium": "linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--secondary)) 50%, hsl(var(--gold)) 100%)",
       },
     },
   },
