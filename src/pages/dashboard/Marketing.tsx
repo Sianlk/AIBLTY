@@ -8,13 +8,14 @@ import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 import {
   Megaphone, TrendingUp, Share2, Mail, MessageSquare, Globe,
   Zap, Target, BarChart3, Users, Calendar, Clock, Send,
   Twitter, Linkedin, Instagram, Facebook, Youtube, Sparkles,
   Rocket, ArrowRight, CheckCircle, Play, Pause, Settings,
   RefreshCw, Eye, Heart, MessageCircle, Repeat2, DollarSign,
-  PieChart, Activity, Bot, Loader2
+  PieChart, Activity, Bot, Loader2, Plus
 } from 'lucide-react';
 
 interface Campaign {
@@ -60,8 +61,15 @@ export default function MarketingPage() {
 
   const handleGenerateContent = async () => {
     setIsGenerating(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setPostContent("🚀 Introducing AIBLTY - The world's most advanced AI platform that transforms ideas into revenue-generating businesses.\n\n✨ What we offer:\n• One-click full-stack app generation\n• AI Workforce that works 24/7\n• Quantum-powered optimization\n• Automated marketing & scaling\n\nJoin the revolution. Link in bio.\n\n#AI #Startup #Innovation #TechStartup #ArtificialIntelligence");
+    const response = await sendAIMessage(
+      [{ role: 'user', content: 'Generate a viral marketing post for AIBLTY - the world\'s most advanced AI platform. Include emojis, call-to-action, and make it highly engaging. Format for multiple social platforms.' }],
+      'marketing'
+    );
+    if (response.success) {
+      setPostContent(response.content);
+    } else {
+      toast({ title: 'Error', description: response.error || 'Failed to generate content', variant: 'destructive' });
+    }
     setIsGenerating(false);
   };
 
