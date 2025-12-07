@@ -48,7 +48,7 @@ Please provide a comprehensive business plan including:
 
     try {
       const projectRes = await api.createProject('Business Plan', businessIdea.slice(0, 100));
-      const result = await api.buildBusiness(projectRes.data.id, fullPrompt);
+      const result = await api.ai.buildBusiness(projectRes.data.id, fullPrompt);
       setResponse(result.data?.response || 'No response received');
     } catch (error: any) {
       toast({

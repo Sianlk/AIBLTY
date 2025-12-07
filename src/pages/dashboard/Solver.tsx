@@ -26,7 +26,7 @@ export default function SolverPage() {
     try {
       // For now, we'll create a temporary project for the solver
       const projectRes = await api.createProject('Problem Solver Session', 'Auto-generated for problem solving');
-      const result = await api.solveProblem(projectRes.data.id, prompt);
+      const result = await api.ai.solveProblem(projectRes.data.id, prompt);
       setResponse(result.data?.response || 'No response received');
     } catch (error: any) {
       toast({
