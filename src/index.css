@@ -2,79 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Bodoni+Moda:wght@400;500;600;700;800;900&display=swap');
 
 @layer base {
   :root {
-    --background: 220 25% 3%;
-    --foreground: 45 35% 97%;
+    --background: 225 20% 2%;
+    --foreground: 42 30% 95%;
 
-    --card: 220 22% 5%;
-    --card-foreground: 45 35% 97%;
+    --card: 225 18% 4%;
+    --card-foreground: 42 30% 95%;
 
-    --popover: 220 22% 5%;
-    --popover-foreground: 45 35% 97%;
+    --popover: 225 18% 4%;
+    --popover-foreground: 42 30% 95%;
 
     /* True Antique Gold - Rich Warm Metallic */
-    --primary: 42 78% 45%;
-    --primary-foreground: 220 25% 3%;
+    --primary: 40 82% 48%;
+    --primary-foreground: 225 20% 2%;
 
     /* Deep Royal Purple */
-    --secondary: 275 55% 32%;
-    --secondary-foreground: 45 35% 97%;
+    --secondary: 270 60% 35%;
+    --secondary-foreground: 42 30% 95%;
 
-    --muted: 220 18% 10%;
-    --muted-foreground: 220 12% 48%;
+    --muted: 225 15% 8%;
+    --muted-foreground: 225 10% 50%;
 
-    --accent: 42 78% 45%;
-    --accent-foreground: 220 25% 3%;
+    --accent: 40 82% 48%;
+    --accent-foreground: 225 20% 2%;
 
-    --destructive: 0 72% 48%;
-    --destructive-foreground: 45 35% 97%;
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 42 30% 95%;
 
-    --border: 42 35% 18%;
-    --input: 220 18% 10%;
-    --ring: 42 78% 45%;
+    --border: 40 40% 20%;
+    --input: 225 15% 8%;
+    --ring: 40 82% 48%;
 
-    --radius: 0.875rem;
+    --radius: 1rem;
 
     /* Ultra Premium Gold Palette - True Antique Gold */
-    --gold: 42 78% 45%;
-    --gold-light: 45 70% 60%;
-    --gold-bright: 48 85% 55%;
-    --gold-dark: 38 72% 28%;
-    --gold-deep: 35 68% 20%;
-    --gold-muted: 42 50% 35%;
-    --champagne: 45 45% 80%;
-    --champagne-dark: 42 40% 68%;
-    --obsidian: 220 30% 3%;
-    --obsidian-light: 220 25% 7%;
-    --platinum: 220 15% 75%;
-    --platinum-dark: 220 12% 55%;
-    --bronze: 28 65% 38%;
-    --copper: 18 75% 42%;
+    --gold: 40 82% 48%;
+    --gold-light: 42 75% 62%;
+    --gold-bright: 45 90% 58%;
+    --gold-dark: 36 78% 30%;
+    --gold-deep: 32 72% 18%;
+    --gold-muted: 40 55% 38%;
+    --champagne: 42 50% 82%;
+    --champagne-dark: 40 45% 70%;
+    --obsidian: 225 25% 2%;
+    --obsidian-light: 225 20% 5%;
+    --platinum: 225 12% 78%;
+    --platinum-dark: 225 10% 58%;
+    --bronze: 25 70% 40%;
+    --copper: 15 80% 45%;
     
     /* Glow Colors */
-    --glow-gold: 42 78% 45%;
-    --glow-secondary: 275 55% 48%;
-    --glow-success: 155 80% 38%;
-    --glow-warning: 38 95% 52%;
-    --glow-elite: 275 80% 55%;
-    --glow-quantum: 195 95% 52%;
+    --glow-gold: 40 82% 48%;
+    --glow-secondary: 270 60% 50%;
+    --glow-success: 150 85% 40%;
+    --glow-warning: 35 100% 55%;
+    --glow-elite: 270 85% 58%;
+    --glow-quantum: 190 100% 55%;
     
-    --glass-bg: 220 25% 5%;
-    --glass-border: 42 60% 28%;
+    --glass-bg: 225 20% 4%;
+    --glass-border: 40 65% 30%;
     
-    --grid-color: 42 45% 18%;
+    --grid-color: 40 50% 20%;
 
-    --sidebar-background: 220 25% 3%;
-    --sidebar-foreground: 45 35% 97%;
-    --sidebar-primary: 42 78% 45%;
-    --sidebar-primary-foreground: 220 25% 3%;
-    --sidebar-accent: 220 22% 8%;
-    --sidebar-accent-foreground: 45 35% 97%;
-    --sidebar-border: 42 35% 15%;
-    --sidebar-ring: 42 78% 45%;
+    --sidebar-background: 225 20% 2%;
+    --sidebar-foreground: 42 30% 95%;
+    --sidebar-primary: 40 82% 48%;
+    --sidebar-primary-foreground: 225 20% 2%;
+    --sidebar-accent: 225 18% 6%;
+    --sidebar-accent-foreground: 42 30% 95%;
+    --sidebar-border: 40 40% 18%;
+    --sidebar-ring: 40 82% 48%;
   }
 }
 
