@@ -56,6 +56,7 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
+          muted: "hsl(var(--gold-muted))",
         },
         champagne: "hsl(var(--champagne))",
         obsidian: "hsl(var(--obsidian))",
@@ -109,8 +110,8 @@ export default {
           "100%": { opacity: "1" },
         },
         "shimmer": {
-          "0%": { backgroundPosition: "200% 0" },
-          "100%": { backgroundPosition: "-200% 0" },
+          "0%": { backgroundPosition: "300% 0" },
+          "100%": { backgroundPosition: "-300% 0" },
         },
       },
       animation: {
@@ -120,13 +121,10 @@ export default {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         "slide-up": "slide-up 0.5s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
-        "shimmer": "shimmer 3s ease-in-out infinite",
+        "shimmer": "shimmer 4s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "grid-pattern": "linear-gradient(hsl(var(--grid-color)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--grid-color)) 1px, transparent 1px)",
-        "gradient-gold": "linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%)",
-        "gradient-premium": "linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--secondary)) 50%, hsl(var(--gold)) 100%)",
       },
     },
   },

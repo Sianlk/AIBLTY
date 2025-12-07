@@ -161,15 +161,15 @@ const Index = () => {
               </span>
             </motion.div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="gradient-text glow-text-strong">One Command.</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 font-display">
+              <span className="text-primary glow-text">One Command.</span>
               <br />
               <span className="text-foreground">Infinite Possibilities.</span>
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Transform ideas into production-ready applications, businesses, and revenue streams.
-              <span className="text-primary"> AIBLTY</span> handles architecture, code, deployment, and everything in between.
+              <span className="text-gold-light font-semibold"> AIBLTY</span> handles architecture, code, deployment, and everything in between.
             </p>
           </motion.div>
 
@@ -209,8 +209,8 @@ const Index = () => {
                 transition={{ delay: 0.9 + i * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl md:text-4xl font-bold text-primary glow-text mb-1">{stat.value}</div>
-                <div className="text-xs font-mono text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+                <div className="text-3xl md:text-4xl font-bold text-gold-light glow-text mb-1">{stat.value}</div>
+                <div className="text-xs font-mono text-platinum uppercase tracking-wider">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -273,8 +273,8 @@ const Index = () => {
               <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase mb-4 block">
                 Complete Output
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Production-Ready <span className="gradient-text">Everything</span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-display">
+                Production-Ready <span className="text-primary">Everything</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
                 Every output is complete, documented, and ready for deployment.
@@ -312,8 +312,8 @@ const Index = () => {
               <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase mb-4 block">
                 System Modules
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Capability <span className="gradient-text">Matrix</span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-display">
+                Capability <span className="text-primary">Matrix</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
                 Twelve interconnected modules working in harmony to transform your ideas into reality.
@@ -360,8 +360,8 @@ const Index = () => {
               <span className="text-xs font-mono text-primary tracking-[0.3em] uppercase mb-4 block">
                 Investment Tiers
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Choose Your <span className="gradient-text">Power Level</span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-display">
+                Choose Your <span className="text-primary">Power Level</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
                 Start free, scale infinitely. All plans include core AI capabilities.
