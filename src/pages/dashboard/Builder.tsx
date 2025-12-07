@@ -14,25 +14,34 @@ import {
   DollarSign, Users, Target, TrendingUp, Lightbulb, Code,
   Palette, Database, Server, Globe, Smartphone, Shield,
   Zap, CheckCircle, ArrowRight, Crown, Lock, Package,
-  Layers, GitBranch, Cloud, Terminal
+  Layers, GitBranch, Cloud, Terminal, Phone, MessageSquare,
+  Brain, Mic, Video, Bot, Workflow, Network, Atom, Star
 } from 'lucide-react';
 
 const stackOptions = [
-  { id: 'frontend', name: 'Frontend', icon: Palette, desc: 'React, Vue, Angular', enabled: true },
-  { id: 'backend', name: 'Backend', icon: Server, desc: 'Node.js, Python, Go', enabled: true },
-  { id: 'database', name: 'Database', icon: Database, desc: 'PostgreSQL, MongoDB', enabled: true },
-  { id: 'api', name: 'API Layer', icon: Globe, desc: 'REST, GraphQL', enabled: true },
-  { id: 'mobile', name: 'Mobile App', icon: Smartphone, desc: 'React Native, Flutter', enabled: false },
-  { id: 'auth', name: 'Authentication', icon: Shield, desc: 'OAuth, JWT', enabled: true },
+  { id: 'frontend', name: 'Frontend', icon: Palette, desc: 'React, Vue, Next.js, Angular', enabled: true },
+  { id: 'backend', name: 'Backend', icon: Server, desc: 'Node.js, Python, Go, Rust', enabled: true },
+  { id: 'database', name: 'Database', icon: Database, desc: 'PostgreSQL, MongoDB, Redis', enabled: true },
+  { id: 'api', name: 'API Layer', icon: Globe, desc: 'REST, GraphQL, WebSocket', enabled: true },
+  { id: 'mobile', name: 'Mobile App', icon: Smartphone, desc: 'React Native, Flutter', enabled: true },
+  { id: 'auth', name: 'Authentication', icon: Shield, desc: 'OAuth, JWT, SSO, MFA', enabled: true },
+  { id: 'ai', name: 'AI/ML Layer', icon: Brain, desc: 'Custom models, GPT, embeddings', enabled: true },
+  { id: 'realtime', name: 'Real-time', icon: Zap, desc: 'WebSocket, Pub/Sub, Streaming', enabled: true },
 ];
 
 const appTypes = [
-  { id: 'saas', name: 'SaaS Platform', icon: Cloud, desc: 'Subscription-based software' },
-  { id: 'marketplace', name: 'Marketplace', icon: Package, desc: 'Two-sided marketplace' },
-  { id: 'ecommerce', name: 'E-Commerce', icon: DollarSign, desc: 'Online store with payments' },
-  { id: 'social', name: 'Social Platform', icon: Users, desc: 'Community & social features' },
-  { id: 'productivity', name: 'Productivity Tool', icon: Zap, desc: 'Business automation' },
-  { id: 'ai-app', name: 'AI Application', icon: Sparkles, desc: 'AI-powered solution' },
+  { id: 'saas', name: 'SaaS Platform', icon: Cloud, desc: 'Multi-tenant subscription software', premium: false },
+  { id: 'caas', name: 'CaaS Solution', icon: MessageSquare, desc: 'Communication-as-a-Service', premium: true },
+  { id: 'voip', name: 'VoIP System', icon: Phone, desc: 'Voice & video platform like Twilio', premium: true },
+  { id: 'gpt', name: 'Custom GPT', icon: Brain, desc: 'AI model surpassing ChatGPT', premium: true },
+  { id: 'marketplace', name: 'Marketplace', icon: Package, desc: 'Two-sided marketplace platform', premium: false },
+  { id: 'ecommerce', name: 'E-Commerce', icon: DollarSign, desc: 'Online store with Stripe', premium: false },
+  { id: 'social', name: 'Social Platform', icon: Users, desc: 'Community & social features', premium: false },
+  { id: 'enterprise', name: 'Enterprise Suite', icon: Workflow, desc: 'Full business automation', premium: true },
+  { id: 'ai-app', name: 'AI Application', icon: Sparkles, desc: 'AI-powered solution', premium: false },
+  { id: 'fintech', name: 'FinTech Platform', icon: TrendingUp, desc: 'Financial services app', premium: true },
+  { id: 'healthcare', name: 'HealthTech', icon: Atom, desc: 'Medical & health solutions', premium: true },
+  { id: 'iot', name: 'IoT Platform', icon: Network, desc: 'Connected devices ecosystem', premium: true },
 ];
 
 export default function BuilderPage() {
@@ -43,6 +52,8 @@ export default function BuilderPage() {
   const [selectedStack, setSelectedStack] = useState(stackOptions.filter(s => s.enabled).map(s => s.id));
   const [includeMonetization, setIncludeMonetization] = useState(true);
   const [includeMarketing, setIncludeMarketing] = useState(true);
+  const [includeAI, setIncludeAI] = useState(true);
+  const [includeScaling, setIncludeScaling] = useState(true);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -59,95 +70,198 @@ export default function BuilderPage() {
     const stackList = selectedStack.join(', ');
 
     const fullPrompt = `
-AIBLTY FULL-STACK BUSINESS & APPLICATION GENERATOR
-═══════════════════════════════════════════════════
+AIBLTY QUANTUM GENESIS ENGINE — ULTRA FULL-STACK BUILDER
+═══════════════════════════════════════════════════════════════════════════════
+
+MISSION: Build a ${selectedType?.name} that SURPASSES all existing solutions combined
 
 BUSINESS CONCEPT
-----------------
+────────────────────────────────────────────────────────────────────────────────
 Idea: ${businessIdea}
-Target Market: ${targetMarket || 'To be determined based on analysis'}
-Budget: ${budget || 'Flexible - optimize for ROI'}
+Target Market: ${targetMarket || 'Analyze and determine optimal market segments'}
+Budget: ${budget || 'Optimize for maximum ROI with minimal initial investment'}
 Application Type: ${selectedType?.name} (${selectedType?.desc})
 Technology Stack: ${stackList}
 
-GENERATION REQUIREMENTS
------------------------
-${includeMonetization ? '✓ Include monetization strategy with pricing tiers and payment integration' : ''}
-${includeMarketing ? '✓ Include auto-marketing strategy with viral growth mechanics' : ''}
-✓ Full-stack implementation ready for deployment
-✓ Premium UI/UX design specifications
-✓ Scalable architecture diagram
-✓ Security best practices
-✓ Revenue share integration (10% platform commission built-in)
+${appType === 'voip' ? `
+VOIP-SPECIFIC REQUIREMENTS (Surpass Twilio/Vonage/RingCentral)
+────────────────────────────────────────────────────────────────────────────────
+- WebRTC implementation for browser-based calls
+- SIP trunking integration
+- Voice synthesis and recognition
+- Call routing and IVR systems
+- Video conferencing with screen sharing
+- SMS/MMS gateway integration
+- Call recording and analytics
+- Webhook callbacks for all events
+- Multi-region redundancy
+- Carrier-grade scalability (millions of concurrent calls)
+` : ''}
 
-DELIVERABLES REQUIRED
----------------------
-1. EXECUTIVE SUMMARY
-   - Business model canvas
-   - Unique value proposition
-   - Competitive advantages
+${appType === 'caas' ? `
+CAAS-SPECIFIC REQUIREMENTS (Surpass Twilio/SendGrid/Intercom)
+────────────────────────────────────────────────────────────────────────────────
+- Omnichannel messaging (SMS, Email, Chat, Voice, Video)
+- Programmable APIs for all channels
+- Webhook-driven event architecture
+- Message queuing with guaranteed delivery
+- Template management system
+- Analytics and deliverability tracking
+- Sender reputation management
+- Multi-tenant architecture
+- Enterprise-grade security
+- Global edge network deployment
+` : ''}
+
+${appType === 'gpt' ? `
+CUSTOM GPT REQUIREMENTS (Surpass ChatGPT/Claude/Gemini Combined)
+────────────────────────────────────────────────────────────────────────────────
+- Multi-modal capability (text, image, audio, video)
+- Custom training pipeline with fine-tuning
+- RAG (Retrieval Augmented Generation) integration
+- Real-time web access and tool use
+- Code execution sandbox
+- Multi-agent orchestration
+- Persistent memory across sessions
+- Custom personality and expertise domains
+- Streaming responses with low latency
+- Enterprise security and compliance
+- Seamless API for embedding
+- Self-improvement and evolution capabilities
+` : ''}
+
+${appType === 'saas' ? `
+SAAS-SPECIFIC REQUIREMENTS (Premium Multi-Tenant Platform)
+────────────────────────────────────────────────────────────────────────────────
+- Multi-tenant architecture with data isolation
+- Subscription billing (Stripe integration)
+- Usage-based pricing options
+- White-labeling capabilities
+- Admin dashboard for all tenants
+- API with rate limiting
+- Webhook system
+- SSO/SAML integration
+- Audit logging
+- GDPR/SOC2 compliance built-in
+` : ''}
+
+GENERATION REQUIREMENTS (HIGHEST QUALITY)
+────────────────────────────────────────────────────────────────────────────────
+${includeMonetization ? '✓ MONETIZATION ENGINE - Complete revenue system with Stripe Connect, subscription tiers, usage billing, platform commission (10%)' : ''}
+${includeMarketing ? '✓ AUTO-MARKETING SYSTEM - Viral loops, referral programs, SEO, social automation, growth hacking' : ''}
+${includeAI ? '✓ AI INTEGRATION - Custom GPT capabilities, automation bots, intelligent features throughout' : ''}
+${includeScaling ? '✓ INFINITE SCALING - Kubernetes configs, auto-scaling, global CDN, multi-region deployment' : ''}
+✓ PREMIUM UI/UX - World-class design that converts
+✓ SECURITY FORTRESS - Enterprise-grade security, encryption, compliance
+✓ 10% PLATFORM REVENUE SHARE - Automatic commission via Stripe Connect
+
+COMPLETE DELIVERABLES REQUIRED
+────────────────────────────────────────────────────────────────────────────────
+
+1. EXECUTIVE BLUEPRINT
+   - Complete business model canvas
+   - Unique value proposition that dominates market
+   - Competitive moat analysis
+   - 5-year vision and milestones
 
 2. TECHNICAL ARCHITECTURE
-   - System design with diagrams
-   - Database schema
-   - API endpoints specification
-   - Component hierarchy
+   - Full system design diagrams (ASCII art)
+   - Microservices architecture
+   - Database schema with indexes
+   - API specification (OpenAPI 3.0)
+   - Event-driven architecture patterns
+   - Caching strategy
 
 3. FRONTEND SPECIFICATION
-   - UI/UX wireframes description
-   - Page structure and navigation
-   - Component library requirements
-   - Responsive design guidelines
+   - Complete UI/UX wireframes (detailed descriptions)
+   - Component library (atomic design)
+   - Responsive breakpoints
+   - Animation and interaction patterns
+   - Accessibility (WCAG 2.1 AAA)
+   - Performance optimization (Core Web Vitals)
 
 4. BACKEND SPECIFICATION
-   - Server architecture
-   - Database models
-   - Authentication flow
-   - API documentation
+   - Complete API endpoints
+   - Authentication & authorization flows
+   - Database migrations
+   - Background job processors
+   - Rate limiting & throttling
+   - Error handling patterns
 
-5. MONETIZATION ENGINE
-   - Pricing strategy (GBP)
-   - Subscription tiers
-   - Payment gateway integration (Stripe)
-   - Revenue optimization tactics
-   - Platform commission handling (10% on transactions)
+5. AI/ML INTEGRATION
+   - Custom model architecture
+   - Training pipeline
+   - Inference optimization
+   - Prompt engineering templates
+   - Embedding strategies
+   - Agent orchestration
 
-6. MARKETING & GROWTH
-   - Go-to-market strategy
-   - Viral loop mechanics
-   - SEO optimization plan
-   - Social media automation
-   - Referral program design
+6. MONETIZATION ENGINE
+   - Pricing strategy (GBP) with psychology
+   - Subscription tier details
+   - Stripe integration code
+   - Platform commission handling (10% automatic)
+   - Usage tracking and billing
+   - Revenue forecasting models
 
-7. DEPLOYMENT ROADMAP
-   - Infrastructure requirements
-   - CI/CD pipeline
-   - Monitoring and analytics
-   - Scaling strategy
+7. MARKETING & GROWTH
+   - Go-to-market strategy (90-day plan)
+   - Viral coefficient optimization
+   - SEO keyword strategy
+   - Content calendar
+   - Social automation scripts
+   - Referral program mechanics
+   - Influencer outreach templates
 
-8. FINANCIAL PROJECTIONS
-   - Revenue forecasts (12 months)
-   - Cost structure
-   - Break-even analysis
-   - ROI projections
+8. DEPLOYMENT & DEVOPS
+   - Docker configurations
+   - Kubernetes manifests
+   - CI/CD pipeline (GitHub Actions)
+   - Multi-environment setup
+   - Monitoring & alerting
+   - Disaster recovery plan
 
-9. COMPLETE CODE STRUCTURE
-   - File/folder structure
-   - Key implementation patterns
-   - Integration points
+9. SECURITY & COMPLIANCE
+   - Security architecture
+   - GDPR compliance checklist
+   - SOC 2 preparation
+   - Penetration test scenarios
+   - Encryption specifications
+   - Access control matrix
 
-Generate a comprehensive, production-ready specification that can be immediately implemented.
-Output must be premium quality, suitable for enterprise deployment.
+10. FINANCIAL PROJECTIONS
+    - 12-month revenue forecast
+    - Unit economics
+    - CAC/LTV analysis
+    - Break-even timeline
+    - Funding requirements (if applicable)
+    - Exit strategy options
+
+11. COMPLETE CODEBASE STRUCTURE
+    - Directory tree
+    - Key file contents
+    - Integration patterns
+    - Testing strategy
+    - Documentation standards
+
+12. LAUNCH CHECKLIST
+    - Pre-launch verification
+    - Launch day operations
+    - Post-launch monitoring
+    - Week 1 priorities
+
+OUTPUT FORMAT: Production-ready specification that can be immediately implemented.
+QUALITY STANDARD: Enterprise-grade, investor-ready, market-dominating.
     `.trim();
 
     setLoading(true);
     setResponse(null);
 
     try {
-      const projectRes = await api.createProject('Full-Stack Build', businessIdea.slice(0, 100));
+      const projectRes = await api.createProject('Genesis Build', businessIdea.slice(0, 100));
       const result = await api.ai.buildBusiness(projectRes.data.id, fullPrompt);
       setResponse(result.data?.response || result.data?.message || 'Build specification generated successfully.');
-      toast({ title: 'Build Complete', description: 'Your full-stack specification is ready' });
+      toast({ title: 'Genesis Complete', description: 'Your full-stack specification is ready' });
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -182,13 +296,13 @@ Output must be premium quality, suitable for enterprise deployment.
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/30 via-secondary/20 to-primary/30 flex items-center justify-center mx-auto mb-4 border border-primary/30 shadow-lg shadow-primary/10">
-            <Rocket className="w-10 h-10 text-primary" />
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold/30 via-glow-elite/20 to-gold/30 flex items-center justify-center mx-auto mb-4 border border-gold/30 shadow-lg shadow-gold/20">
+            <Rocket className="w-10 h-10 text-gold" />
           </div>
-          <h1 className="text-3xl font-bold mb-2 gradient-text">Full-Stack Business Builder</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Transform your idea into a complete, production-ready application with 
-            frontend, backend, database, monetization, and marketing - all in one click.
+          <h1 className="text-3xl font-bold mb-2 gradient-text-premium font-display">Quantum Genesis Builder</h1>
+          <p className="text-platinum max-w-2xl mx-auto">
+            Build SaaS, VoIP, CaaS, Custom GPTs, and complete enterprises that 
+            <span className="text-gold-light font-semibold"> surpass all existing solutions combined</span>.
           </p>
         </motion.div>
 
@@ -201,103 +315,108 @@ Output must be premium quality, suitable for enterprise deployment.
         >
           <div className="premium-card p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Crown className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold/30 to-glow-elite/20 flex items-center justify-center border border-gold/20">
+                <Crown className="w-5 h-5 text-gold" />
               </div>
               <div>
-                <p className="font-medium text-sm">Revenue Share Program</p>
-                <p className="text-xs text-muted-foreground">10% platform commission on all transactions - automatic Stripe integration</p>
+                <p className="font-semibold text-sm text-champagne">Revenue Share Program</p>
+                <p className="text-xs text-platinum-dark">10% platform commission on all transactions — automatic Stripe Connect integration</p>
               </div>
             </div>
             <div className="text-right">
               <p className="text-sm font-bold text-glow-success">90% to you</p>
-              <p className="text-xs text-muted-foreground">10% platform fee</p>
+              <p className="text-xs text-platinum-dark">10% platform fee</p>
             </div>
           </div>
         </motion.div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-4xl mx-auto space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="idea">1. Describe Idea</TabsTrigger>
-            <TabsTrigger value="stack">2. Choose Stack</TabsTrigger>
-            <TabsTrigger value="features">3. Features</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-muted/30 border border-gold/20">
+            <TabsTrigger value="idea" className="data-[state=active]:bg-gold/20 data-[state=active]:text-champagne">1. Describe Idea</TabsTrigger>
+            <TabsTrigger value="stack" className="data-[state=active]:bg-gold/20 data-[state=active]:text-champagne">2. Choose Stack</TabsTrigger>
+            <TabsTrigger value="features" className="data-[state=active]:bg-gold/20 data-[state=active]:text-champagne">3. Features</TabsTrigger>
           </TabsList>
 
           <TabsContent value="idea">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-6 space-y-4"
+              className="premium-card p-6 space-y-4"
             >
               <div className="space-y-2">
-                <Label htmlFor="idea" className="flex items-center gap-2 text-lg">
-                  <Lightbulb className="w-5 h-5 text-primary" />
-                  Your Business Idea
+                <Label htmlFor="idea" className="flex items-center gap-2 text-lg text-champagne">
+                  <Lightbulb className="w-5 h-5 text-gold" />
+                  Your Vision
                 </Label>
                 <Textarea
                   id="idea"
-                  placeholder="Describe your application or business idea in detail. Include what problem it solves, who it's for, and any key features you want..."
+                  placeholder="Describe what you want to build in detail. Examples: 'A VoIP system that rivals Twilio', 'A custom GPT that outperforms ChatGPT', 'A SaaS platform for...'..."
                   value={businessIdea}
                   onChange={(e) => setBusinessIdea(e.target.value)}
                   rows={5}
-                  className="bg-muted/50 border-border resize-none text-base"
+                  className="bg-muted/30 border-gold/20 resize-none text-base focus:border-gold/50"
                   disabled={loading}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="market" className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-primary" />
+                  <Label htmlFor="market" className="flex items-center gap-2 text-champagne-dark">
+                    <Users className="w-4 h-4 text-gold" />
                     Target Market
                   </Label>
                   <Input
                     id="market"
-                    placeholder="e.g., Small business owners, ages 25-45"
+                    placeholder="e.g., Enterprise SaaS companies, Startups"
                     value={targetMarket}
                     onChange={(e) => setTargetMarket(e.target.value)}
-                    className="bg-muted/50 border-border"
+                    className="bg-muted/30 border-gold/20 focus:border-gold/50"
                     disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="budget" className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-primary" />
+                  <Label htmlFor="budget" className="flex items-center gap-2 text-champagne-dark">
+                    <DollarSign className="w-4 h-4 text-gold" />
                     Budget (optional)
                   </Label>
                   <Input
                     id="budget"
-                    placeholder="e.g., £10,000 - £50,000"
+                    placeholder="e.g., £10,000 - £100,000"
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
-                    className="bg-muted/50 border-border"
+                    className="bg-muted/30 border-gold/20 focus:border-gold/50"
                     disabled={loading}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm">Application Type</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <Label className="text-sm text-champagne">Application Type</Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {appTypes.map((type) => (
                     <button
                       key={type.id}
                       onClick={() => setAppType(type.id)}
-                      className={`p-4 rounded-xl border text-left transition-all ${
+                      className={`p-4 rounded-xl border text-left transition-all relative ${
                         appType === type.id
-                          ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
-                          : 'border-border bg-muted/30 hover:border-primary/50'
+                          ? 'border-gold bg-gold/10 shadow-lg shadow-gold/10'
+                          : 'border-gold/20 bg-muted/20 hover:border-gold/40'
                       }`}
                     >
-                      <type.icon className={`w-6 h-6 mb-2 ${appType === type.id ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <p className="font-medium text-sm">{type.name}</p>
-                      <p className="text-xs text-muted-foreground">{type.desc}</p>
+                      {type.premium && (
+                        <div className="absolute -top-2 -right-2">
+                          <Crown className="w-4 h-4 text-gold" />
+                        </div>
+                      )}
+                      <type.icon className={`w-6 h-6 mb-2 ${appType === type.id ? 'text-gold' : 'text-platinum-dark'}`} />
+                      <p className="font-medium text-sm text-champagne">{type.name}</p>
+                      <p className="text-xs text-platinum-dark">{type.desc}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <Button onClick={() => setActiveTab('stack')} className="w-full" disabled={!businessIdea.trim()}>
+              <Button onClick={() => setActiveTab('stack')} className="w-full gradient-gold" disabled={!businessIdea.trim()}>
                 Next: Choose Stack <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </motion.div>
@@ -307,15 +426,15 @@ Output must be premium quality, suitable for enterprise deployment.
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-6 space-y-4"
+              className="premium-card p-6 space-y-4"
             >
-              <Label className="text-lg flex items-center gap-2">
-                <Layers className="w-5 h-5 text-primary" />
+              <Label className="text-lg flex items-center gap-2 text-champagne">
+                <Layers className="w-5 h-5 text-gold" />
                 Technology Stack
               </Label>
-              <p className="text-sm text-muted-foreground">Select the components for your full-stack application</p>
+              <p className="text-sm text-platinum-dark">Select all components for your enterprise-grade application</p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {stackOptions.map((stack) => (
                   <button
                     key={stack.id}
@@ -323,24 +442,24 @@ Output must be premium quality, suitable for enterprise deployment.
                     className={`p-4 rounded-xl border text-left transition-all ${
                       selectedStack.includes(stack.id)
                         ? 'border-glow-success bg-glow-success/10'
-                        : 'border-border bg-muted/30 hover:border-glow-success/50'
+                        : 'border-gold/20 bg-muted/20 hover:border-glow-success/50'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <stack.icon className={`w-6 h-6 ${selectedStack.includes(stack.id) ? 'text-glow-success' : 'text-muted-foreground'}`} />
+                      <stack.icon className={`w-6 h-6 ${selectedStack.includes(stack.id) ? 'text-glow-success' : 'text-platinum-dark'}`} />
                       {selectedStack.includes(stack.id) && <CheckCircle className="w-4 h-4 text-glow-success" />}
                     </div>
-                    <p className="font-medium text-sm">{stack.name}</p>
-                    <p className="text-xs text-muted-foreground">{stack.desc}</p>
+                    <p className="font-medium text-sm text-champagne">{stack.name}</p>
+                    <p className="text-xs text-platinum-dark">{stack.desc}</p>
                   </button>
                 ))}
               </div>
 
               <div className="flex gap-4">
-                <Button variant="outline" onClick={() => setActiveTab('idea')}>
+                <Button variant="outline" onClick={() => setActiveTab('idea')} className="border-gold/20 hover:bg-gold/5">
                   Back
                 </Button>
-                <Button onClick={() => setActiveTab('features')} className="flex-1">
+                <Button onClick={() => setActiveTab('features')} className="flex-1 gradient-gold">
                   Next: Features <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -351,58 +470,79 @@ Output must be premium quality, suitable for enterprise deployment.
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-6 space-y-6"
+              className="premium-card p-6 space-y-6"
             >
               <div>
-                <Label className="text-lg flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  Built-in Features
+                <Label className="text-lg flex items-center gap-2 mb-4 text-champagne">
+                  <Sparkles className="w-5 h-5 text-gold" />
+                  Enterprise Features
                 </Label>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-gold/10">
                     <div className="flex items-center gap-4">
                       <DollarSign className="w-6 h-6 text-glow-success" />
                       <div>
-                        <p className="font-medium">Monetization Engine</p>
-                        <p className="text-xs text-muted-foreground">Stripe integration, subscription tiers, payment processing</p>
+                        <p className="font-medium text-champagne">Monetization Engine</p>
+                        <p className="text-xs text-platinum-dark">Stripe Connect, subscriptions, usage billing, revenue optimization</p>
                       </div>
                     </div>
                     <Switch checked={includeMonetization} onCheckedChange={setIncludeMonetization} />
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-gold/10">
                     <div className="flex items-center gap-4">
-                      <TrendingUp className="w-6 h-6 text-primary" />
+                      <TrendingUp className="w-6 h-6 text-gold" />
                       <div>
-                        <p className="font-medium">Auto-Marketing System</p>
-                        <p className="text-xs text-muted-foreground">Viral loops, referral program, SEO, social automation</p>
+                        <p className="font-medium text-champagne">Auto-Marketing System</p>
+                        <p className="text-xs text-platinum-dark">Viral loops, referral programs, SEO, social automation</p>
                       </div>
                     </div>
                     <Switch checked={includeMarketing} onCheckedChange={setIncludeMarketing} />
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-primary/10 border border-primary/30 rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-gold/10">
                     <div className="flex items-center gap-4">
-                      <Crown className="w-6 h-6 text-primary" />
+                      <Brain className="w-6 h-6 text-glow-elite" />
                       <div>
-                        <p className="font-medium">Revenue Share (10%)</p>
-                        <p className="text-xs text-muted-foreground">Automatic commission collection via Stripe Connect</p>
+                        <p className="font-medium text-champagne">AI/GPT Integration</p>
+                        <p className="text-xs text-platinum-dark">Custom models, intelligent automation, AI-powered features</p>
                       </div>
                     </div>
-                    <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Required</span>
+                    <Switch checked={includeAI} onCheckedChange={setIncludeAI} />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-gold/10">
+                    <div className="flex items-center gap-4">
+                      <Network className="w-6 h-6 text-glow-quantum" />
+                      <div>
+                        <p className="font-medium text-champagne">Infinite Scaling</p>
+                        <p className="text-xs text-platinum-dark">Kubernetes, auto-scaling, global CDN, multi-region deployment</p>
+                      </div>
+                    </div>
+                    <Switch checked={includeScaling} onCheckedChange={setIncludeScaling} />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gold/10 border border-gold/30 rounded-xl">
+                    <div className="flex items-center gap-4">
+                      <Crown className="w-6 h-6 text-gold" />
+                      <div>
+                        <p className="font-medium text-champagne">Revenue Share (10%)</p>
+                        <p className="text-xs text-platinum-dark">Automatic commission collection via Stripe Connect</p>
+                      </div>
+                    </div>
+                    <span className="text-xs bg-gold/20 text-gold px-3 py-1.5 rounded-full border border-gold/30">Required</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-4">
-                <Button variant="outline" onClick={() => setActiveTab('stack')}>
+                <Button variant="outline" onClick={() => setActiveTab('stack')} className="border-gold/20 hover:bg-gold/5">
                   Back
                 </Button>
                 <Button 
                   onClick={handleSubmit} 
-                  variant="glow" 
-                  className="flex-1"
+                  className="flex-1 gradient-gold"
                   disabled={loading || !businessIdea.trim()}
                 >
                   {loading ? (
@@ -410,69 +550,44 @@ Output must be premium quality, suitable for enterprise deployment.
                   ) : (
                     <Rocket className="w-5 h-5 mr-2" />
                   )}
-                  {loading ? 'Building Full-Stack Application...' : 'Generate Complete Application'}
+                  {loading ? 'Genesis in Progress...' : 'Generate Complete Application'}
                 </Button>
               </div>
             </motion.div>
           </TabsContent>
         </Tabs>
 
-        {/* Response Section */}
+        {/* Response Area */}
         <AnimatePresence>
-          {(loading || response) && (
+          {response && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto glass-panel p-6"
+              className="max-w-4xl mx-auto"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                    <Terminal className="w-5 h-5 text-primary" />
+              <div className="premium-card overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b border-gold/20 bg-gradient-to-r from-muted/50 via-gold/5 to-muted/50">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-glow-success" />
+                    <span className="font-semibold text-champagne">Genesis Complete</span>
                   </div>
-                  <div>
-                    <span className="font-semibold">Full-Stack Build Specification</span>
-                    <p className="text-xs text-muted-foreground">{appTypes.find(t => t.id === appType)?.name}</p>
-                  </div>
-                </div>
-                {response && (
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={handleCopy}>
+                    <Button size="sm" variant="ghost" onClick={() => setResponse(null)} className="hover:bg-gold/10">
+                      <RefreshCw className="w-4 h-4 mr-1" /> New Build
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={handleCopy} className="hover:bg-gold/10">
                       {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
                       {copied ? 'Copied' : 'Copy'}
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => { setResponse(null); setActiveTab('idea'); }}>
-                      <RefreshCw className="w-4 h-4 mr-1" />
-                      New Build
-                    </Button>
                   </div>
-                )}
+                </div>
+                <div className="p-6 max-h-[600px] overflow-y-auto bg-gradient-to-b from-background to-obsidian">
+                  <div className="prose prose-invert max-w-none">
+                    <pre className="whitespace-pre-wrap text-sm text-platinum font-mono leading-relaxed">{response}</pre>
+                  </div>
+                </div>
               </div>
-
-              {loading ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-sm text-primary">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Generating complete full-stack specification...</span>
-                  </div>
-                  <div className="space-y-2">
-                    {['Analyzing business model...', 'Designing architecture...', 'Creating database schema...', 'Building API specification...', 'Generating UI components...', 'Setting up monetization...'].map((step, i) => (
-                      <div 
-                        key={i} 
-                        className="h-4 bg-primary/10 rounded animate-pulse" 
-                        style={{ width: `${100 - i * 10}%`, animationDelay: `${i * 0.15}s` }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="prose prose-invert max-w-none">
-                  <div className="whitespace-pre-wrap text-foreground/90 leading-relaxed text-sm">
-                    {response}
-                  </div>
-                </div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
