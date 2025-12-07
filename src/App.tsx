@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AIChatWidget } from "@/components/chat/AIChatWidget";
 
 // Public pages
 import Index from "./pages/Index";
@@ -97,6 +98,13 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Global AI Chat Widget */}
+          <AIChatWidget 
+            title="AIBLTY Assistant" 
+            placeholder="Ask AIBLTY anything..."
+            mode="general"
+          />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
