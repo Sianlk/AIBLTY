@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 import { 
   Megaphone, Plus, Calendar, Clock, Image, Link2,
   Twitter, Instagram, Linkedin, Facebook, Youtube,
@@ -107,10 +108,17 @@ export default function SocialPage() {
 
   const handleGenerateContent = async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setNewPostContent("🚀 Just discovered an amazing productivity hack that changed everything!\n\nHere's what I learned:\n1. Focus on one thing at a time\n2. Take regular breaks\n3. Celebrate small wins\n\nWhat's your top productivity tip? 👇\n\n#Productivity #Growth #Success");
+    const response = await sendAIMessage(
+      [{ role: 'user', content: 'Generate a viral, engaging social media post for a technology/AI platform. Include emojis, hashtags, and make it shareable. Keep it under 280 characters for Twitter compatibility.' }],
+      'social'
+    );
+    if (response.success) {
+      setNewPostContent(response.content);
+      toast({ title: 'Content Generated', description: 'AI has generated a viral post for you' });
+    } else {
+      toast({ title: 'Error', description: response.error || 'Failed to generate content', variant: 'destructive' });
+    }
     setLoading(false);
-    toast({ title: 'Content Generated', description: 'AI has generated a post for you' });
   };
 
   return (

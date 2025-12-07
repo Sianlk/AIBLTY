@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 import { 
   Zap, Plus, Play, Pause, Settings, Clock, 
   Mail, MessageSquare, Calendar, Database,
-  FileText, Globe, Webhook, ArrowRight
+  FileText, Globe, Webhook, ArrowRight, Loader2, Sparkles
 } from 'lucide-react';
 
 interface Workflow {
@@ -38,7 +42,29 @@ const actions = [
 ];
 
 export default function AutomationPage() {
-  const [workflows] = useState<Workflow[]>(sampleWorkflows);
+  const [workflows, setWorkflows] = useState<Workflow[]>(sampleWorkflows);
+  const [workflowInput, setWorkflowInput] = useState('');
+  const [aiSuggestion, setAiSuggestion] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleGetSuggestion = async () => {
+    if (!workflowInput.trim()) {
+      toast({ title: 'Error', description: 'Please describe what you want to automate', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    const response = await sendAIMessage(
+      [{ role: 'user', content: `Design an automation workflow for: ${workflowInput}. Include trigger, actions, and expected outcomes.` }],
+      'automation'
+    );
+    if (response.success) {
+      setAiSuggestion(response.content);
+    } else {
+      toast({ title: 'Error', description: response.error || 'Failed to generate suggestion', variant: 'destructive' });
+    }
+    setLoading(false);
+  };
 
   return (
     <DashboardLayout>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,10 +8,13 @@ import { AibltyLogo } from '@/components/aiblty/AibltyLogo';
 import { GridBackground } from '@/components/atlas/GridBackground';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Loader2, Mail, Lock, User, ArrowLeft, AlertCircle } from 'lucide-react';
+import { z } from 'zod';
 
-type AuthMode = 'login' | 'register' | 'forgot' | 'reset';
+type AuthMode = 'login' | 'register' | 'forgot';
+
+const emailSchema = z.string().email('Please enter a valid email address');
+const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
 
 export default function AuthPage() {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -20,16 +23,56 @@ export default function AuthPage() {
   const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { login, register } = useAuth();
+  const { login, register, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
 
   const from = (location.state as any)?.from?.pathname || '/dashboard';
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    try {
+      emailSchema.parse(email);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.email = e.errors[0].message;
+      }
+    }
+
+    if (mode !== 'forgot') {
+      try {
+        passwordSchema.parse(password);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          newErrors.password = e.errors[0].message;
+        }
+      }
+    }
+
+    if (mode === 'register' && password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
 
     try {
@@ -38,24 +81,27 @@ export default function AuthPage() {
         toast({ title: 'Welcome back!', description: 'Successfully logged in.' });
         navigate(from, { replace: true });
       } else if (mode === 'register') {
-        if (password !== confirmPassword) {
-          throw new Error('Passwords do not match');
-        }
-        if (password.length < 8) {
-          throw new Error('Password must be at least 8 characters');
-        }
         await register(email, password, name);
         toast({ title: 'Account created!', description: 'Welcome to AIBLTY.' });
         navigate('/dashboard', { replace: true });
       } else if (mode === 'forgot') {
-        // API call for password reset would go here
         toast({ title: 'Reset link sent', description: 'Check your email for the reset link.' });
         setMode('login');
       }
     } catch (error: any) {
+      let message = 'Something went wrong';
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        message = 'Invalid email or password';
+      } else if (error.message?.includes('User already registered')) {
+        message = 'An account with this email already exists';
+      } else if (error.message) {
+        message = error.message;
+      }
+      
       toast({
         title: 'Error',
-        description: error.message || 'Something went wrong',
+        description: message,
         variant: 'destructive',
       });
     } finally {
@@ -72,7 +118,7 @@ export default function AuthPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="glass-panel p-8">
+        <div className="glass-panel p-8 border-primary/20">
           <div className="text-center mb-8">
             <Link to="/" className="inline-block mb-4">
               <AibltyLogo className="w-12 h-12 mx-auto" />
@@ -116,11 +162,20 @@ export default function AuthPage() {
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors(prev => ({ ...prev, email: '' }));
+                  }}
                   required
-                  className="pl-10 bg-muted/50 border-border"
+                  className={`pl-10 bg-muted/50 border-border ${errors.email ? 'border-destructive' : ''}`}
                 />
               </div>
+              {errors.email && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             {mode !== 'forgot' && (
@@ -133,11 +188,20 @@ export default function AuthPage() {
                     type="password"
                     placeholder="••••••••"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrors(prev => ({ ...prev, password: '' }));
+                    }}
                     required
-                    className="pl-10 bg-muted/50 border-border"
+                    className={`pl-10 bg-muted/50 border-border ${errors.password ? 'border-destructive' : ''}`}
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
             )}
 
@@ -151,11 +215,20 @@ export default function AuthPage() {
                     type="password"
                     placeholder="••••••••"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setErrors(prev => ({ ...prev, confirmPassword: '' }));
+                    }}
                     required
-                    className="pl-10 bg-muted/50 border-border"
+                    className={`pl-10 bg-muted/50 border-border ${errors.confirmPassword ? 'border-destructive' : ''}`}
                   />
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
             )}
 
@@ -165,9 +238,7 @@ export default function AuthPage() {
               className="w-full"
               disabled={loading}
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : null}
+              {loading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               {mode === 'login' && 'Sign In'}
               {mode === 'register' && 'Create Account'}
               {mode === 'forgot' && 'Send Reset Link'}

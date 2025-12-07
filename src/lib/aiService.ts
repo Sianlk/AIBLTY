@@ -8,7 +8,13 @@ export type AIMode =
   | "automation" 
   | "quantum" 
   | "revenue" 
-  | "workforce";
+  | "workforce"
+  | "marketing"
+  | "social"
+  | "evolution"
+  | "security"
+  | "network"
+  | "integrations";
 
 export interface Message {
   role: "user" | "assistant" | "system";
