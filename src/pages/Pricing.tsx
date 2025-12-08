@@ -4,11 +4,13 @@ import { Footer } from '@/components/aiblty/Footer';
 import { GridBackground } from '@/components/atlas/GridBackground';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Check, Zap, Crown, Rocket, Loader2 } from 'lucide-react';
+import { Check, Zap, Crown, Rocket, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+
+type PlanType = 'free' | 'starter' | 'pro' | 'elite';
 
 const plans = [
   {
@@ -22,11 +24,27 @@ const plans = [
       '1 Project',
       'Basic Problem Solver',
       'Community support',
-      'Standard response time',
     ],
     cta: 'Get Started',
     popular: false,
-    plan: 'free' as const,
+    plan: 'free' as PlanType,
+  },
+  {
+    name: 'Starter',
+    price: '£19',
+    period: '/month',
+    description: 'Perfect for light users',
+    icon: Star,
+    features: [
+      '25 AI queries/day',
+      '3 Projects',
+      'All Core AI Tools',
+      'Business Builder Basic',
+      'Email support',
+    ],
+    cta: 'Start Building',
+    popular: false,
+    plan: 'starter' as PlanType,
   },
   {
     name: 'Pro',
@@ -35,7 +53,7 @@ const plans = [
     description: 'For professionals and growing teams',
     icon: Rocket,
     features: [
-      'Unlimited AI queries (fair use)',
+      '100 AI queries/day',
       '10 Projects',
       'All AI Tools',
       'Business Builder',
@@ -46,7 +64,7 @@ const plans = [
     ],
     cta: 'Upgrade to Pro',
     popular: true,
-    plan: 'pro' as const,
+    plan: 'pro' as PlanType,
   },
   {
     name: 'Elite',
@@ -55,19 +73,19 @@ const plans = [
     description: 'Maximum power for enterprises',
     icon: Crown,
     features: [
-      'Everything in Pro',
+      'Unlimited AI queries',
       'Unlimited Projects',
+      'Everything in Pro',
       'AI Workforce',
       'Quantum Engine',
       'White-label exports',
       'Dedicated support',
       'API access',
-      'Custom integrations',
       'SLA guarantee',
     ],
     cta: 'Go Elite',
     popular: false,
-    plan: 'elite' as const,
+    plan: 'elite' as PlanType,
   },
 ];
 
@@ -77,7 +95,7 @@ export default function PricingPage() {
   const navigate = useNavigate();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  const handleSelectPlan = async (plan: 'free' | 'pro' | 'elite') => {
+  const handleSelectPlan = async (plan: PlanType) => {
     if (!user) {
       navigate('/auth');
       return;
@@ -97,7 +115,7 @@ export default function PricingPage() {
     try {
       const response = await api.createCheckout(plan);
       if (response.data?.url) {
-        window.location.href = response.data.url;
+        window.open(response.data.url, '_blank');
       }
     } catch (error: any) {
       toast({
@@ -133,14 +151,14 @@ export default function PricingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {plans.map((plan, i) => (
               <motion.div
                 key={plan.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className={`relative glass-panel p-8 ${
+                className={`relative glass-panel p-6 ${
                   plan.popular ? 'border-primary ring-2 ring-primary/20' : ''
                 }`}
               >
@@ -153,28 +171,29 @@ export default function PricingPage() {
                 )}
 
                 <div className="text-center mb-6">
-                  <plan.icon className={`w-12 h-12 mx-auto mb-4 ${
+                  <plan.icon className={`w-10 h-10 mx-auto mb-3 ${
                     plan.popular ? 'text-primary' : 'text-muted-foreground'
                   }`} />
-                  <h3 className="text-2xl font-bold">{plan.name}</h3>
+                  <h3 className="text-xl font-bold">{plan.name}</h3>
                   <div className="mt-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
+                    <span className="text-3xl font-bold">{plan.price}</span>
+                    <span className="text-muted-foreground text-sm">{plan.period}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{plan.description}</p>
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-2 mb-6">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm text-foreground">{feature}</span>
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <span className="text-xs text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Button
                   variant={plan.popular ? 'glow' : 'outline'}
+                  size="sm"
                   className="w-full"
                   onClick={() => handleSelectPlan(plan.plan)}
                   disabled={loadingPlan === plan.plan || user?.plan === plan.plan}

@@ -141,7 +141,7 @@ class ApiClient {
   }
 
   // Billing
-  async createCheckout(plan: 'pro' | 'elite') {
+  async createCheckout(plan: 'starter' | 'pro' | 'elite') {
     return this.request<any>('/billing/stripe/checkout', {
       method: 'POST',
       body: JSON.stringify({ plan }),
