@@ -8,7 +8,7 @@ interface Profile {
   email: string;
   name: string | null;
   avatar_url: string | null;
-  plan: 'free' | 'pro' | 'elite';
+  plan: 'free' | 'starter' | 'pro' | 'elite';
 }
 
 interface UserWithProfile extends Profile {
