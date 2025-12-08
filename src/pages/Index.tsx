@@ -183,7 +183,7 @@ const Index = () => {
               transition={{ delay: 0.2 }}
               className="mb-8"
             >
-              <span className="inline-flex items-center gap-2 elite-badge mb-6 shimmer">
+              <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-background border border-gold/30 shadow-lg shadow-gold/20">
                 <Crown className="w-3.5 h-3.5" />
                 Autonomous Intelligence Platform
                 <Crown className="w-3.5 h-3.5" />
@@ -191,7 +191,7 @@ const Index = () => {
             </motion.div>
             
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold mb-8 font-display tracking-wide leading-[1.1]">
-              <span className="gradient-text-premium glow-text-strong">One Command.</span>
+              <span className="text-gold-light" style={{ textShadow: '0 0 40px hsl(38 72% 45% / 0.5)' }}>One Command.</span>
               <br />
               <span className="text-foreground">Infinite Possibilities.</span>
             </h1>
@@ -564,7 +564,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-flex items-center gap-2 elite-badge mb-8 shimmer">
+              <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-background border border-gold/30 shadow-lg shadow-gold/20 mb-8">
                 <Sparkles className="w-3.5 h-3.5" />
                 Begin Your Journey
                 <Sparkles className="w-3.5 h-3.5" />
