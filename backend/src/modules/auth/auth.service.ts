@@ -3,6 +3,41 @@ import { isAdmin, env } from '../../config/env';
 import { signToken, JWTPayload } from '../../utils/jwt';
 import bcrypt from 'bcryptjs';
 import { AppError } from '../../middleware/errorHandler';
+import { z } from 'zod';
+
+// Input validation schemas
+const emailSchema = z
+  .string()
+  .trim()
+  .min(1, 'Email is required')
+  .max(255, 'Email must be less than 255 characters')
+  .email('Invalid email format')
+  .toLowerCase();
+
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password must be less than 128 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number');
+
+const nameSchema = z
+  .string()
+  .trim()
+  .max(100, 'Name must be less than 100 characters')
+  .optional();
+
+const registerSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  name: nameSchema,
+});
+
+const loginSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1, 'Password is required').max(128, 'Password must be less than 128 characters'),
+});
 
 export interface RegisterInput {
   email: string;
@@ -16,9 +51,16 @@ export interface LoginInput {
 }
 
 export async function register(input: RegisterInput) {
-  const { email, password, name } = input;
+  // Validate input
+  const validation = registerSchema.safeParse(input);
+  if (!validation.success) {
+    const errorMessage = validation.error.errors.map(e => e.message).join(', ');
+    throw new AppError(errorMessage, 400);
+  }
   
-  const existingUser = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  const { email, password, name } = validation.data;
+  
+  const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new AppError('Email already registered', 400);
   }
@@ -58,9 +100,16 @@ export async function register(input: RegisterInput) {
 }
 
 export async function login(input: LoginInput) {
-  const { email, password } = input;
+  // Validate input
+  const validation = loginSchema.safeParse(input);
+  if (!validation.success) {
+    const errorMessage = validation.error.errors.map(e => e.message).join(', ');
+    throw new AppError(errorMessage, 400);
+  }
   
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  const { email, password } = validation.data;
+  
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw new AppError('Invalid credentials', 401);
   }
