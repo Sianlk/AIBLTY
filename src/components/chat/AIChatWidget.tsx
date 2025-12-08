@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { sendAIMessage, type Message, type AIMode } from "@/lib/aiService";
+import { useUsageTracking } from "@/hooks/useUsageTracking";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 import {
   MessageSquare,
   Send,
@@ -14,6 +17,9 @@ import {
   Sparkles,
   Minimize2,
   Maximize2,
+  Crown,
+  Zap,
+  Lock,
 } from "lucide-react";
 
 interface AIChatWidgetProps {
@@ -29,6 +35,8 @@ export function AIChatWidget({
   placeholder = "Ask AIBLTY anything...",
 }: AIChatWidgetProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { usage, isLimitReached, incrementUsage, checkUsage } = useUsageTracking();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -44,8 +52,34 @@ export function AIChatWidget({
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (isOpen) {
+      checkUsage();
+    }
+  }, [isOpen, checkUsage]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
+
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to use AIBLTY AI features",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check token limit
+    if (isLimitReached) {
+      toast({
+        title: "Daily limit reached",
+        description: "Upgrade your plan for more AI tokens",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const userMessage: Message = { role: "user", content: input.trim() };
     const newMessages = [...messages, userMessage];
@@ -61,12 +95,22 @@ export function AIChatWidget({
           ...prev,
           { role: "assistant", content: response.content },
         ]);
+        // Increment usage after successful response
+        await incrementUsage(1);
       } else {
-        toast({
-          title: "Error",
-          description: response.error || "Failed to get response",
-          variant: "destructive",
-        });
+        if (response.error?.includes("Daily token limit")) {
+          toast({
+            title: "Daily limit reached",
+            description: "Upgrade your plan for more AI tokens",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: response.error || "Failed to get response",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -85,7 +129,6 @@ export function AIChatWidget({
       handleSend();
     }
   };
-
   if (!isOpen) {
     return (
       <motion.button
@@ -222,6 +265,54 @@ export function AIChatWidget({
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Usage indicator */}
+            {user && usage && (
+              <div className="px-4 py-2 border-t border-gold/10 bg-muted/20">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-3 h-3 text-primary" />
+                    <span className="text-muted-foreground">
+                      {usage.dailyLimit === 'unlimited' ? (
+                        <span className="text-primary">Unlimited tokens</span>
+                      ) : (
+                        <span>{usage.remaining}/{usage.dailyLimit} tokens remaining</span>
+                      )}
+                    </span>
+                  </div>
+                  {usage.plan === 'free' && (
+                    <Link to="/dashboard/billing" className="text-primary hover:underline flex items-center gap-1">
+                      <Crown className="w-3 h-3" />
+                      Upgrade
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Login prompt for non-authenticated users */}
+            {!user && (
+              <div className="p-4 border-t border-gold/20 bg-muted/20">
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">
+                    <Link to="/auth" className="text-primary hover:underline">Sign in</Link> to use AI features
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Limit reached prompt */}
+            {user && isLimitReached && (
+              <div className="p-4 border-t border-destructive/30 bg-destructive/10">
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <Crown className="w-4 h-4 text-primary" />
+                  <span className="text-muted-foreground">
+                    Daily limit reached. <Link to="/dashboard/billing" className="text-primary hover:underline">Upgrade now</Link>
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Input */}
             <div className="p-4 border-t border-gold/20 bg-gradient-to-r from-muted/30 via-transparent to-muted/30">
               <div className="flex gap-2">
@@ -229,13 +320,13 @@ export function AIChatWidget({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={placeholder}
+                  placeholder={!user ? "Sign in to chat..." : isLimitReached ? "Upgrade to continue..." : placeholder}
                   className="min-h-[44px] max-h-24 resize-none bg-muted/50 border-gold/20 focus:border-gold/50"
-                  disabled={isLoading}
+                  disabled={isLoading || !user || isLimitReached}
                 />
                 <Button
                   onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
+                  disabled={!input.trim() || isLoading || !user || isLimitReached}
                   className="h-11 w-11 shrink-0"
                   variant="glow"
                   size="icon"
