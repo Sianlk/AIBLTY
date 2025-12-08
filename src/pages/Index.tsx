@@ -68,11 +68,21 @@ const pricingPlans = [
     tier: "free",
   },
   {
+    name: "Starter",
+    price: "£19",
+    period: "/month",
+    description: "Perfect for light users",
+    features: ["25 AI queries/day", "3 Projects", "All Core AI Tools", "Business Builder Basic", "Email support"],
+    cta: "Get Starter",
+    popular: false,
+    tier: "starter",
+  },
+  {
     name: "Pro",
     price: "£49",
     period: "/month",
     description: "For serious builders and entrepreneurs",
-    features: ["Unlimited AI queries", "10 Projects", "All AI Tools", "Business Builder", "Automation Engine", "Priority support"],
+    features: ["100 AI queries/day", "10 Projects", "All AI Tools", "Business Builder", "Automation Engine", "Priority support"],
     cta: "Upgrade to Pro",
     popular: true,
     tier: "pro",
@@ -82,7 +92,7 @@ const pricingPlans = [
     price: "£199",
     period: "/month",
     description: "Maximum power for scaling ventures",
-    features: ["Everything in Pro", "Unlimited Projects", "AI Workforce", "Quantum Engine", "White-label exports", "Dedicated support", "API access"],
+    features: ["Unlimited AI queries", "Unlimited Projects", "Everything in Pro", "AI Workforce", "Quantum Engine", "White-label exports", "Dedicated support", "API access"],
     cta: "Go Elite",
     popular: false,
     tier: "elite",
@@ -497,7 +507,7 @@ const Index = () => {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {pricingPlans.map((plan, i) => (
                 <motion.div
                   key={plan.name}
