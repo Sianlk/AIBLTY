@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Network, Globe, Server, Activity, Wifi, MapPin } from 'lucide-react';
+import { Network, Globe, Server, Activity, Wifi, MapPin, RefreshCw, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 
 const regions = [
   { name: 'Europe (London)', status: 'active', latency: '12ms', load: 45 },
@@ -10,12 +14,38 @@ const regions = [
 ];
 
 export default function NetworkPage() {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleOptimize = async () => {
+    setLoading(true);
+    try {
+      const response = await sendAIMessage(
+        [{ role: 'user', content: 'Analyze network performance and suggest optimizations for latency and load balancing across regions.' }],
+        'network'
+      );
+      if (response.success) {
+        toast({ title: 'Analysis Complete', description: 'Network optimizations identified' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to analyze network', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Network className="w-6 h-6 text-primary" />Global Network</h1>
-          <p className="text-muted-foreground">Distributed infrastructure for worldwide deployment</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2"><Network className="w-6 h-6 text-primary" />Global Network</h1>
+            <p className="text-muted-foreground">Distributed infrastructure for worldwide deployment</p>
+          </div>
+          <Button variant="outline" onClick={handleOptimize} disabled={loading}>
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            Optimize
+          </Button>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

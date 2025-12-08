@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 import { 
   DollarSign, TrendingUp, CreditCard, PieChart, 
   BarChart3, ArrowUp, ArrowDown, Target, Zap,
-  Wallet, Receipt, Settings, Plus, RefreshCw
+  Wallet, Receipt, Settings, Plus, RefreshCw, Loader2, Sparkles
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
@@ -36,6 +37,24 @@ const pricingModels = [
 
 export default function RevenuePage() {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const handleOptimize = async () => {
+    setLoading(true);
+    try {
+      const response = await sendAIMessage(
+        [{ role: 'user', content: 'Analyze my revenue data and provide optimization suggestions to maximize profit and reduce churn.' }],
+        'revenue'
+      );
+      if (response.success) {
+        toast({ title: 'Optimization Complete', description: 'Revenue insights generated' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to run optimization', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const stats = [
     { label: 'Monthly Revenue', value: '$16,200', change: '+18%', icon: DollarSign, positive: true },
@@ -249,7 +268,8 @@ export default function RevenuePage() {
               <p className="text-muted-foreground mb-6">
                 AI-powered suggestions to maximize your revenue and reduce churn
               </p>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button className="bg-green-600 hover:bg-green-700" onClick={handleOptimize} disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
                 Run Optimization Analysis
               </Button>
             </div>

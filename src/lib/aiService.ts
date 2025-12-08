@@ -14,7 +14,8 @@ export type AIMode =
   | "evolution"
   | "security"
   | "network"
-  | "integrations";
+  | "integrations"
+  | "insights";
 
 export interface Message {
   role: "user" | "assistant" | "system";

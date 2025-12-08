@@ -3,9 +3,9 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import api from '@/lib/apiClient';
+import { createCheckout, openBillingPortal, getSubscriptionStatus } from '@/lib/billingService';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CreditCard, Crown, Zap, Rocket, Check, ArrowRight,
   Shield, Clock, RefreshCw, Download, Loader2, AlertTriangle,
@@ -42,26 +42,31 @@ const plans = [
 ];
 
 export default function BillingPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [subscription, setSubscription] = useState<any>(null);
+  const [subscription, setSubscription] = useState<{ plan: string; status: string } | null>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [loadingPayments, setLoadingPayments] = useState(true);
 
   useEffect(() => {
     fetchBillingData();
-  }, []);
+    
+    // Handle Stripe redirect
+    if (searchParams.get('success') === 'true') {
+      toast({ title: 'Payment Successful!', description: 'Your subscription is now active.' });
+      refreshUser?.();
+    } else if (searchParams.get('canceled') === 'true') {
+      toast({ title: 'Payment Canceled', description: 'Your subscription was not processed.', variant: 'destructive' });
+    }
+  }, [searchParams]);
 
   const fetchBillingData = async () => {
     try {
-      const [subRes, paymentRes] = await Promise.all([
-        api.getSubscription(),
-        api.getPayments?.() || Promise.resolve({ data: [] }),
-      ]);
-      setSubscription(subRes.data);
-      setPayments(paymentRes.data || []);
+      const sub = await getSubscriptionStatus();
+      setSubscription(sub);
     } catch (error) {
       console.error('Failed to fetch billing data', error);
     } finally {
@@ -73,9 +78,11 @@ export default function BillingPage() {
     if (plan === 'free') return;
     setLoading(true);
     try {
-      const response = await api.createCheckout(plan as 'pro' | 'elite');
-      if (response.data?.url) {
-        window.location.href = response.data.url;
+      const response = await createCheckout(plan as 'pro' | 'elite');
+      if (response.url) {
+        window.location.href = response.url;
+      } else if (response.error) {
+        throw new Error(response.error);
       }
     } catch (error: any) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
@@ -85,15 +92,18 @@ export default function BillingPage() {
   };
 
   const handleManageSubscription = async () => {
+    setLoading(true);
     try {
-      const response = await api.getBillingPortal?.();
-      if (response?.data?.url) {
-        window.location.href = response.data.url;
-      } else {
-        toast({ title: 'Portal', description: 'Opening billing management...' });
+      const response = await openBillingPortal();
+      if (response.url) {
+        window.location.href = response.url;
+      } else if (response.error) {
+        toast({ title: 'Info', description: response.error });
       }
     } catch (error) {
-      toast({ title: 'Info', description: 'Contact support to manage your subscription' });
+      toast({ title: 'Info', description: 'Please subscribe to a plan to manage billing' });
+    } finally {
+      setLoading(false);
     }
   };
 

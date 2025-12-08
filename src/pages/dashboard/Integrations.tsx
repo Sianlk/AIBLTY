@@ -5,10 +5,11 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 import { 
   Plug, Search, Plus, Check, ExternalLink, Settings,
   CreditCard, Mail, Calendar, Database, Cloud, 
-  FileText, BarChart3, MessageSquare, Webhook, Key
+  FileText, BarChart3, MessageSquare, Webhook, Key, Loader2, Sparkles
 } from 'lucide-react';
 
 interface Integration {

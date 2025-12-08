@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { sendAIMessage } from '@/lib/aiService';
+import { useToast } from '@/hooks/use-toast';
 import { 
   BarChart3, TrendingUp, TrendingDown, Users, 
-  Activity, DollarSign, Clock, Target
+  Activity, DollarSign, Clock, Target, Loader2, Sparkles
 } from 'lucide-react';
 import {
   LineChart,
@@ -34,19 +38,45 @@ const performanceData = [
 ];
 
 export default function InsightsPage() {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleAIAnalysis = async () => {
+    setLoading(true);
+    try {
+      const response = await sendAIMessage(
+        [{ role: 'user', content: 'Analyze my usage data and provide actionable insights for improving productivity and efficiency.' }],
+        'general'
+      );
+      if (response.success) {
+        toast({ title: 'AI Analysis Complete', description: 'Check your insights below' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to run AI analysis', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between"
         >
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-primary" />
-            Insights Hub
-          </h1>
-          <p className="text-muted-foreground">Track your performance and usage analytics</p>
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-primary" />
+              Insights Hub
+            </h1>
+            <p className="text-muted-foreground">Track your performance and usage analytics</p>
+          </div>
+          <Button onClick={handleAIAnalysis} disabled={loading} variant="glow">
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            AI Analysis
+          </Button>
         </motion.div>
 
         {/* Stats Grid */}
@@ -60,7 +90,7 @@ export default function InsightsPage() {
             { label: 'Total Queries', value: '147', change: '+23%', up: true, icon: Activity },
             { label: 'Time Saved', value: '18.5h', change: '+12%', up: true, icon: Clock },
             { label: 'Projects', value: '5', change: '+2', up: true, icon: Target },
-            { label: 'This Month', value: '$0', change: 'Free Plan', up: null, icon: DollarSign },
+            { label: 'This Month', value: '£0', change: 'Free Plan', up: null, icon: DollarSign },
           ].map((stat) => (
             <div key={stat.label} className="glass-panel p-4">
               <div className="flex items-center justify-between mb-2">

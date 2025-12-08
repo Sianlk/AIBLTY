@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, Check, X, Brain, Lightbulb, RefreshCw } from 'lucide-react';
+import { Sparkles, TrendingUp, Check, X, Brain, Lightbulb, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 
 const suggestions = [
   { id: '1', title: 'Optimise prompt routing', desc: 'Route complex queries to more capable models', impact: 'High', confidence: 92 },
@@ -13,7 +14,25 @@ const suggestions = [
 
 export default function EvolutionPage() {
   const [appliedIds, setAppliedIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  const handleAnalyzeLogs = async () => {
+    setLoading(true);
+    try {
+      const response = await sendAIMessage(
+        [{ role: 'user', content: 'Analyze system logs and generate AI improvement suggestions based on usage patterns.' }],
+        'evolution'
+      );
+      if (response.success) {
+        toast({ title: 'Analysis Complete', description: 'New suggestions generated' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to analyze logs', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleApply = (id: string) => {
     setAppliedIds([...appliedIds, id]);
@@ -28,7 +47,10 @@ export default function EvolutionPage() {
             <h1 className="text-2xl font-bold flex items-center gap-2"><Sparkles className="w-6 h-6 text-secondary" />Evolution Layer</h1>
             <p className="text-muted-foreground">Self-learning system that adapts to your patterns</p>
           </div>
-          <Button variant="outline"><RefreshCw className="w-4 h-4 mr-2" />Analyse Logs</Button>
+          <Button variant="outline" onClick={handleAnalyzeLogs} disabled={loading}>
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            Analyse Logs
+          </Button>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
