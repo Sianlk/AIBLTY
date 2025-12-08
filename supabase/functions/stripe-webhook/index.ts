@@ -1,10 +1,22 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
+};
+
+const logStep = (step: string, details?: Record<string, unknown>) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
+};
+
+// Price ID to Plan mapping
+const PRICE_TO_PLAN: Record<string, "starter" | "pro" | "elite"> = {
+  "price_1SbsPJCL9suzCBniOemTarlT": "starter",
+  "price_1Sbs9aCL9suzCBnijVCsflFI": "pro",
+  "price_1Sbs9pCL9suzCBnimI8LQvOS": "elite",
 };
 
 serve(async (req) => {
@@ -13,15 +25,17 @@ serve(async (req) => {
   }
 
   try {
+    logStep("Webhook received");
+
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
     
     if (!stripeSecretKey) {
-      throw new Error("Stripe not configured");
+      throw new Error("STRIPE_SECRET_KEY not configured");
     }
 
     const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
     const body = await req.text();
@@ -30,34 +44,51 @@ serve(async (req) => {
     let event: Stripe.Event;
 
     if (webhookSecret && signature) {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      try {
+        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+        logStep("Webhook signature verified");
+      } catch (err) {
+        logStep("Webhook signature verification failed", { error: err instanceof Error ? err.message : String(err) });
+        return new Response(JSON.stringify({ error: "Invalid signature" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     } else {
       event = JSON.parse(body);
+      logStep("Webhook received without signature verification (dev mode)");
     }
 
-    console.log(`Processing webhook event: ${event.type}`);
+    logStep("Processing event", { type: event.type, id: event.id });
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
     );
 
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const userId = session.metadata?.user_id;
-        const plan = session.metadata?.plan;
+        logStep("Checkout session completed", { 
+          sessionId: session.id, 
+          customerId: session.customer,
+          metadata: session.metadata 
+        });
 
-        if (userId && plan) {
-          const { error } = await supabaseAdmin
+        if (session.mode === "subscription" && session.metadata?.user_id) {
+          const userId = session.metadata.user_id;
+          const plan = session.metadata.plan as "starter" | "pro" | "elite";
+
+          const { error: updateError } = await supabaseAdmin
             .from("profiles")
-            .update({ plan: plan })
+            .update({ plan })
             .eq("user_id", userId);
 
-          if (error) {
-            console.error("Error updating user plan:", error);
+          if (updateError) {
+            logStep("Error updating user plan", { error: updateError.message, userId });
           } else {
-            console.log(`User ${userId} upgraded to ${plan}`);
+            logStep("User plan updated successfully", { userId, plan });
           }
         }
         break;
@@ -65,74 +96,101 @@ serve(async (req) => {
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
+        logStep("Subscription updated", { 
+          subscriptionId: subscription.id, 
+          status: subscription.status,
+          customerId: subscription.customer 
+        });
+
+        const customerId = typeof subscription.customer === 'string' 
+          ? subscription.customer 
+          : subscription.customer.id;
         
         const customer = await stripe.customers.retrieve(customerId);
-        if (customer.deleted) break;
+        if (customer.deleted) {
+          logStep("Customer was deleted");
+          break;
+        }
 
-        const email = (customer as Stripe.Customer).email;
-        if (!email) break;
+        const email = customer.email;
+        if (!email) {
+          logStep("No email found for customer");
+          break;
+        }
 
-        const { data: profile } = await supabaseAdmin
+        const priceId = subscription.items.data[0]?.price.id;
+        let plan: "free" | "starter" | "pro" | "elite" = "free";
+        
+        if (subscription.status === "active" || subscription.status === "trialing") {
+          plan = PRICE_TO_PLAN[priceId] || "free";
+        }
+
+        const { error } = await supabaseAdmin
           .from("profiles")
-          .select("user_id")
-          .eq("email", email)
-          .single();
+          .update({ plan })
+          .eq("email", email);
 
-        if (profile) {
-          const newPlan = subscription.status === "active" 
-            ? (subscription.items.data[0].price.unit_amount === 19900 ? "elite" : "pro")
-            : "free";
-
-          await supabaseAdmin
-            .from("profiles")
-            .update({ plan: newPlan })
-            .eq("user_id", profile.user_id);
-
-          console.log(`Subscription updated for ${email}: ${newPlan}`);
+        if (error) {
+          logStep("Error updating subscription", { error: error.message });
+        } else {
+          logStep("Subscription plan updated", { email, plan });
         }
         break;
       }
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
+        logStep("Subscription cancelled", { subscriptionId: subscription.id });
+
+        const customerId = typeof subscription.customer === 'string' 
+          ? subscription.customer 
+          : subscription.customer.id;
         
         const customer = await stripe.customers.retrieve(customerId);
         if (customer.deleted) break;
 
-        const email = (customer as Stripe.Customer).email;
+        const email = customer.email;
         if (!email) break;
 
-        const { data: profile } = await supabaseAdmin
+        const { error } = await supabaseAdmin
           .from("profiles")
-          .select("user_id")
-          .eq("email", email)
-          .single();
+          .update({ plan: "free" })
+          .eq("email", email);
 
-        if (profile) {
-          await supabaseAdmin
-            .from("profiles")
-            .update({ plan: "free" })
-            .eq("user_id", profile.user_id);
-
-          console.log(`Subscription canceled for ${email}`);
+        if (error) {
+          logStep("Error downgrading user", { error: error.message });
+        } else {
+          logStep("User downgraded to free plan", { email });
         }
         break;
       }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        logStep("Payment failed", { invoiceId: invoice.id, customerId: invoice.customer });
+        break;
+      }
+
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        logStep("Payment succeeded", { invoiceId: invoice.id, amount: invoice.amount_paid });
+        break;
+      }
+
+      default:
+        logStep("Unhandled event type", { type: event.type });
     }
 
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
     });
   } catch (error) {
-    console.error("Webhook error:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("Webhook error", { error: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
