@@ -240,7 +240,7 @@ const Index = () => {
                 transition={{ delay: 0.9 + i * 0.1 }}
                 className="text-center relative group"
               >
-                <div className="text-4xl md:text-5xl font-bold gradient-text-premium font-display mb-2 group-hover:scale-110 transition-transform">
+                <div className="text-4xl md:text-5xl font-bold text-primary glow-text font-display mb-2 group-hover:scale-110 transition-transform">
                   {stat.value}
                 </div>
                 <div className="text-xs font-mono text-platinum-dark uppercase tracking-[0.2em]">{stat.label}</div>
