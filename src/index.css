@@ -289,7 +289,6 @@
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent;
     background: linear-gradient(
       135deg,
       hsl(var(--champagne)) 0%,
@@ -298,22 +297,25 @@
       hsl(var(--gold-bright)) 75%,
       hsl(var(--champagne)) 100%
     );
-    filter: drop-shadow(0 2px 4px hsl(var(--gold-dark) / 0.3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .gradient-text-premium {
-    @apply bg-clip-text text-transparent;
     background: linear-gradient(
-      145deg,
+      135deg,
       hsl(var(--champagne)) 0%,
-      hsl(var(--gold-light)) 20%,
-      hsl(var(--gold-bright)) 40%,
-      hsl(var(--gold)) 60%,
-      hsl(var(--gold-light)) 80%,
+      hsl(var(--gold-light)) 25%,
+      hsl(var(--gold-bright)) 50%,
+      hsl(var(--gold-light)) 75%,
       hsl(var(--champagne)) 100%
     );
-    animation: text-shimmer 4s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     background-size: 200% auto;
+    animation: text-shimmer 4s ease-in-out infinite;
   }
 
   /* ═══════════════════════════════════════════════════════════════
