@@ -126,8 +126,21 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, mode = "general", stream = false } = await req.json();
-    console.log("Request mode:", mode, "Stream:", stream, "Messages count:", messages?.length);
+    const body = await req.json();
+    const messages = body?.messages;
+    const mode = body?.mode || "general";
+    const stream = body?.stream || false;
+    
+    // Validate messages array
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      console.error("Invalid messages:", messages);
+      return new Response(
+        JSON.stringify({ error: "Messages array is required and must not be empty" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    console.log("Request mode:", mode, "Stream:", stream, "Messages count:", messages.length);
     
     // REQUIRE authentication - JWT is verified by Supabase gateway (verify_jwt = true)
     const authHeader = req.headers.get("Authorization");
