@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownRenderer } from '@/components/ui/markdown-renderer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendAIMessage, type Message } from '@/lib/aiService';
 import { useToast } from '@/hooks/use-toast';
@@ -141,7 +142,11 @@ export default function SolverPage() {
                     ? 'bg-gradient-to-br from-gold/20 to-gold-dark/20 text-champagne border border-gold/30'
                     : 'bg-muted/50 text-foreground border border-border/50'
                 }`}>
-                  <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                  {msg.role === 'assistant' ? (
+                    <MarkdownRenderer content={msg.content} />
+                  ) : (
+                    <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                  )}
                 </div>
                 {msg.role === 'user' && (
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary/30 to-glow-elite/30 flex items-center justify-center flex-shrink-0 border border-secondary/40">

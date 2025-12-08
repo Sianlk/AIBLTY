@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { useToast } from "@/hooks/use-toast";
 import { sendAIMessage, type Message, type AIMode } from "@/lib/aiService";
 import { useUsageTracking } from "@/hooks/useUsageTracking";
@@ -231,7 +232,11 @@ export function AIChatWidget({
                         : "bg-muted/50 text-foreground border border-border/50"
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                    {msg.role === "assistant" ? (
+                      <MarkdownRenderer content={msg.content} className="text-sm" />
+                    ) : (
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                    )}
                   </div>
                   {msg.role === "user" && (
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold-muted/30 to-gold-dark/30 flex items-center justify-center flex-shrink-0 border border-gold/40">
