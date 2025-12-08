@@ -1,6 +1,6 @@
 import { prisma } from '../../config/db';
 import { isAdmin, env } from '../../config/env';
-import { signToken, JWTPayload } from '../../utils/jwt';
+import { generateTokenPair, verifyRefreshToken, signAccessToken } from '../../utils/jwt';
 import bcrypt from 'bcryptjs';
 import { AppError } from '../../middleware/errorHandler';
 import { z } from 'zod';
@@ -50,6 +50,32 @@ export interface LoginInput {
   password: string;
 }
 
+// In-memory token blacklist for revoked refresh tokens
+// In production, use Redis or database for persistence
+const revokedTokens = new Set<string>();
+
+// Token version per user - increment to invalidate all tokens
+const userTokenVersions = new Map<string, number>();
+
+export function getUserTokenVersion(userId: string): number {
+  return userTokenVersions.get(userId) || 0;
+}
+
+export function incrementUserTokenVersion(userId: string): number {
+  const current = getUserTokenVersion(userId);
+  const newVersion = current + 1;
+  userTokenVersions.set(userId, newVersion);
+  return newVersion;
+}
+
+export function revokeToken(tokenId: string): void {
+  revokedTokens.add(tokenId);
+}
+
+export function isTokenRevoked(tokenId: string): boolean {
+  return revokedTokens.has(tokenId);
+}
+
 export async function register(input: RegisterInput) {
   // Validate input
   const validation = registerSchema.safeParse(input);
@@ -78,14 +104,14 @@ export async function register(input: RegisterInput) {
     },
   });
   
-  const payload: JWTPayload = {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-    plan: user.plan,
-  };
-  
-  const accessToken = signToken(payload);
+  const tokenVersion = getUserTokenVersion(user.id);
+  const { accessToken, refreshToken } = generateTokenPair(
+    user.id,
+    user.email,
+    user.role,
+    user.plan,
+    tokenVersion
+  );
   
   return {
     user: {
@@ -96,6 +122,7 @@ export async function register(input: RegisterInput) {
       plan: user.plan,
     },
     accessToken,
+    refreshToken,
   };
 }
 
@@ -119,14 +146,14 @@ export async function login(input: LoginInput) {
     throw new AppError('Invalid credentials', 401);
   }
   
-  const payload: JWTPayload = {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-    plan: user.plan,
-  };
-  
-  const accessToken = signToken(payload);
+  const tokenVersion = getUserTokenVersion(user.id);
+  const { accessToken, refreshToken } = generateTokenPair(
+    user.id,
+    user.email,
+    user.role,
+    user.plan,
+    tokenVersion
+  );
   
   return {
     user: {
@@ -137,23 +164,66 @@ export async function login(input: LoginInput) {
       plan: user.plan,
     },
     accessToken,
+    refreshToken,
   };
 }
 
-export async function refreshToken(userId: string) {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+export async function refreshToken(refreshTokenInput: string) {
+  // Verify the refresh token
+  const payload = verifyRefreshToken(refreshTokenInput);
+  
+  // Check if token is revoked
+  if (isTokenRevoked(payload.tokenId)) {
+    throw new AppError('Token has been revoked', 401);
+  }
+  
+  // Validate token version
+  const currentVersion = getUserTokenVersion(payload.userId);
+  if (payload.tokenVersion !== currentVersion) {
+    throw new AppError('Token has been invalidated', 401);
+  }
+  
+  // Fetch current user data from database to get latest role/plan
+  const user = await prisma.user.findUnique({ where: { id: payload.userId } });
   if (!user) {
     throw new AppError('User not found', 404);
   }
   
-  const payload: JWTPayload = {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-    plan: user.plan,
-  };
+  // Revoke the old refresh token (rotation)
+  revokeToken(payload.tokenId);
   
-  return signToken(payload);
+  // Generate new token pair with current user data
+  const { accessToken, refreshToken: newRefreshToken } = generateTokenPair(
+    user.id,
+    user.email,
+    user.role,
+    user.plan,
+    currentVersion
+  );
+  
+  return {
+    accessToken,
+    refreshToken: newRefreshToken,
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      plan: user.plan,
+    },
+  };
+}
+
+export async function logout(userId: string) {
+  // Increment token version to invalidate all existing tokens for this user
+  incrementUserTokenVersion(userId);
+  return { message: 'Logged out successfully' };
+}
+
+export async function revokeAllUserTokens(userId: string) {
+  // Increment token version to invalidate all tokens
+  incrementUserTokenVersion(userId);
+  return { message: 'All tokens revoked' };
 }
 
 export async function requestPasswordReset(email: string) {
