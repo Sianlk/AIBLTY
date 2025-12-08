@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { motion } from 'framer-motion';
-import { Shield, Lock, FileCheck, Clock, Hash, User, Activity, AlertTriangle } from 'lucide-react';
+import { Shield, Lock, FileCheck, Clock, Hash, User, Activity, AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { sendAIMessage } from '@/lib/aiService';
 
 const ledgerEntries = [
   { id: '1', timestamp: '2024-01-15 14:32:00', actor: 'admin@aiblty.com', action: 'USER_ROLE_CHANGED', data: 'user123 -> admin', hash: 'a1b2c3d4...' },
@@ -13,6 +15,25 @@ const ledgerEntries = [
 
 export default function SecurityPage() {
   const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleRunAudit = async () => {
+    setLoading(true);
+    try {
+      const response = await sendAIMessage(
+        [{ role: 'user', content: 'Run a comprehensive security audit and check for vulnerabilities, access control issues, and compliance gaps.' }],
+        'security'
+      );
+      if (response.success) {
+        toast({ title: 'Audit Complete', description: 'Security report generated' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to run audit', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -22,7 +43,10 @@ export default function SecurityPage() {
             <h1 className="text-2xl font-bold flex items-center gap-2"><Shield className="w-6 h-6 text-primary" />Security Layer</h1>
             <p className="text-muted-foreground">Blockchain-style ledger and audit trail</p>
           </div>
-          <Button variant="outline"><Activity className="w-4 h-4 mr-2" />Run Audit</Button>
+          <Button variant="outline" onClick={handleRunAudit} disabled={loading}>
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Activity className="w-4 h-4 mr-2" />}
+            Run Audit
+          </Button>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
