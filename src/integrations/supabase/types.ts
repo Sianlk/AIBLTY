@@ -161,6 +161,36 @@ export type Database = {
           },
         ]
       }
+      daily_usage: {
+        Row: {
+          created_at: string
+          id: string
+          requests_count: number
+          tokens_used: number
+          updated_at: string
+          usage_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          requests_count?: number
+          tokens_used?: number
+          updated_at?: string
+          usage_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          requests_count?: number
+          tokens_used?: number
+          updated_at?: string
+          usage_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -277,12 +307,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_daily_limit: {
+        Args: { _tokens_requested?: number; _user_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_usage: {
+        Args: { _tokens?: number; _user_id: string }
+        Returns: undefined
       }
     }
     Enums: {
