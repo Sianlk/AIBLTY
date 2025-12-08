@@ -1,17 +1,24 @@
 import { motion } from 'framer-motion';
-import { Crown, Zap, Sparkles, ArrowRight } from 'lucide-react';
+import { Crown, Zap, Sparkles, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 interface UpgradePromptProps {
   title?: string;
   description?: string;
+  currentPlan?: string;
 }
 
 export function UpgradePrompt({ 
   title = "You've reached your daily limit",
-  description = "Upgrade to Pro or Elite for more AI tokens and unlock powerful features"
+  description = "Upgrade your plan for more AI queries and unlock powerful features",
+  currentPlan = 'free'
 }: UpgradePromptProps) {
+  // Only show plans higher than the current plan
+  const showStarter = currentPlan === 'free';
+  const showPro = currentPlan === 'free' || currentPlan === 'starter';
+  const showElite = true; // Always show Elite as top option
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -26,20 +33,33 @@ export function UpgradePrompt({
       <p className="text-muted-foreground mb-6">{description}</p>
       
       <div className="space-y-3 mb-6">
-        <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-lg">
-          <Zap className="w-5 h-5 text-primary shrink-0" />
-          <div>
-            <p className="font-medium text-sm">Pro Plan - £49/month</p>
-            <p className="text-xs text-muted-foreground">100 AI tokens per day</p>
+        {showStarter && (
+          <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-lg">
+            <Star className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Starter Plan - £19/month</p>
+              <p className="text-xs text-muted-foreground">25 AI queries/day, 3 projects</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-3 text-left p-3 bg-primary/10 rounded-lg border border-primary/30">
-          <Sparkles className="w-5 h-5 text-primary shrink-0" />
-          <div>
-            <p className="font-medium text-sm">Elite Plan - £199/month</p>
-            <p className="text-xs text-muted-foreground">Unlimited AI tokens</p>
+        )}
+        {showPro && (
+          <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-lg">
+            <Zap className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Pro Plan - £49/month</p>
+              <p className="text-xs text-muted-foreground">100 AI queries/day, 10 projects</p>
+            </div>
           </div>
-        </div>
+        )}
+        {showElite && (
+          <div className="flex items-center gap-3 text-left p-3 bg-primary/10 rounded-lg border border-primary/30">
+            <Sparkles className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="font-medium text-sm">Elite Plan - £199/month</p>
+              <p className="text-xs text-muted-foreground">Unlimited AI queries & projects</p>
+            </div>
+          </div>
+        )}
       </div>
       
       <Link to="/dashboard/billing">

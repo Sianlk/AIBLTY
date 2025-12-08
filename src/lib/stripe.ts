@@ -11,6 +11,8 @@ export const STRIPE_CONFIG = {
       name: 'Free',
       price: 0,
       currency: 'GBP',
+      tokensPerDay: 5,
+      projectLimit: 1,
       features: [
         '5 AI queries/day',
         '1 Project',
@@ -18,14 +20,34 @@ export const STRIPE_CONFIG = {
         'Community support',
       ],
     },
+    starter: {
+      id: 'starter',
+      name: 'Starter',
+      price: 19,
+      currency: 'GBP',
+      priceId: 'price_1SbsPJCL9suzCBniOemTarlT',
+      productId: 'prod_TZ0Q4sO29Iq7yD',
+      tokensPerDay: 25,
+      projectLimit: 3,
+      features: [
+        '25 AI queries/day',
+        '3 Projects',
+        'All Core AI Tools',
+        'Business Builder Basic',
+        'Email support',
+      ],
+    },
     pro: {
       id: 'pro',
       name: 'Pro',
       price: 49,
       currency: 'GBP',
-      priceId: 'price_pro_monthly', // Will be set up in Stripe Dashboard
+      priceId: 'price_1Sbs9aCL9suzCBnijVCsflFI',
+      productId: 'prod_TZ09fVQJ6mBffb',
+      tokensPerDay: 100,
+      projectLimit: 10,
       features: [
-        'Unlimited AI queries',
+        '100 AI queries/day',
         '10 Projects',
         'All AI Tools',
         'Business Builder',
@@ -38,9 +60,12 @@ export const STRIPE_CONFIG = {
       name: 'Elite',
       price: 199,
       currency: 'GBP',
-      priceId: 'price_elite_monthly', // Will be set up in Stripe Dashboard
+      priceId: 'price_1Sbs9pCL9suzCBnimI8LQvOS',
+      productId: 'prod_TZ0AN7JOzKDX3T',
+      tokensPerDay: -1, // Unlimited
+      projectLimit: -1, // Unlimited
       features: [
-        'Everything in Pro',
+        'Unlimited AI queries',
         'Unlimited Projects',
         'AI Workforce',
         'Quantum Engine',
@@ -50,6 +75,17 @@ export const STRIPE_CONFIG = {
       ],
     },
   },
+};
+
+export type PlanId = keyof typeof STRIPE_CONFIG.plans;
+
+export const getPlanLimits = (planId: PlanId) => {
+  const plan = STRIPE_CONFIG.plans[planId];
+  return {
+    tokensPerDay: plan.tokensPerDay,
+    projectLimit: plan.projectLimit,
+    isUnlimited: plan.tokensPerDay === -1,
+  };
 };
 
 export default STRIPE_CONFIG;

@@ -9,6 +9,7 @@ const corsHeaders = {
 
 // Stripe price IDs for each plan
 const PRICE_IDS: Record<string, string> = {
+  starter: "price_1SbsPJCL9suzCBniOemTarlT",
   pro: "price_1Sbs9aCL9suzCBnijVCsflFI",
   elite: "price_1Sbs9pCL9suzCBnimI8LQvOS",
 };
@@ -38,8 +39,8 @@ serve(async (req) => {
 
     const { plan } = await req.json();
 
-    if (!plan || !["pro", "elite"].includes(plan)) {
-      throw new Error("Invalid plan selected");
+    if (!plan || !["starter", "pro", "elite"].includes(plan)) {
+      throw new Error("Invalid plan selected. Choose starter, pro, or elite.");
     }
 
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
