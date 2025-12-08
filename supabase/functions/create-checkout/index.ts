@@ -1,10 +1,16 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+// Stripe price IDs for each plan
+const PRICE_IDS: Record<string, string> = {
+  pro: "price_1Sbs9aCL9suzCBnijVCsflFI",
+  elite: "price_1Sbs9pCL9suzCBnimI8LQvOS",
 };
 
 serve(async (req) => {
@@ -42,7 +48,7 @@ serve(async (req) => {
     }
 
     const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
     // Check if customer exists
@@ -51,43 +57,18 @@ serve(async (req) => {
       limit: 1,
     });
 
-    let customerId: string;
+    let customerId: string | undefined;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-    } else {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          supabase_user_id: user.id,
-        },
-      });
-      customerId = customer.id;
     }
 
-    // Define prices in GBP
-    const prices: Record<string, number> = {
-      pro: 4900, // £49
-      elite: 19900, // £199
-    };
-
-    // Create checkout session
+    // Create checkout session with actual price IDs
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
+      customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price_data: {
-            currency: "gbp",
-            product_data: {
-              name: `AIBLTY ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`,
-              description: plan === "pro" 
-                ? "Unlimited AI queries, 10 Projects, All AI Tools, Business Builder, Automation Engine"
-                : "Everything in Pro, Unlimited Projects, AI Workforce, Quantum Engine, White-label exports, API access",
-            },
-            unit_amount: prices[plan],
-            recurring: {
-              interval: "month",
-            },
-          },
+          price: PRICE_IDS[plan],
           quantity: 1,
         },
       ],
@@ -100,13 +81,13 @@ serve(async (req) => {
       },
     });
 
-    console.log(`Checkout session created for user ${user.id}, plan: ${plan}`);
+    console.log(`[CREATE-CHECKOUT] Session created for user ${user.id}, plan: ${plan}, session: ${session.id}`);
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Checkout error:", error);
+    console.error("[CREATE-CHECKOUT] Error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       {

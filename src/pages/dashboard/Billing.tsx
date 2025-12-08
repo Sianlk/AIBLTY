@@ -19,7 +19,8 @@ const plans = [
     name: 'Free',
     price: 0,
     icon: Zap,
-    features: ['5 AI queries/day', '1 Project', 'Basic Problem Solver'],
+    tokens: '5 tokens/day',
+    features: ['5 AI queries/day', '1 Project', 'Basic Problem Solver', 'Community Support'],
     limitations: ['Limited AI capabilities', 'No AI Workforce', 'No Quantum Engine', 'No Priority Support'],
   },
   {
@@ -28,7 +29,8 @@ const plans = [
     price: 49,
     icon: Rocket,
     popular: true,
-    features: ['Unlimited AI queries', '10 Projects', 'All AI Tools', 'Business Builder', 'Automation Engine', 'Priority Support'],
+    tokens: '100 tokens/day',
+    features: ['100 AI queries/day', '10 Projects', 'All AI Tools', 'Business Builder', 'Automation Engine', 'Research Engine', 'Priority Support'],
     limitations: ['No AI Workforce', 'No Quantum Engine'],
   },
   {
@@ -36,11 +38,11 @@ const plans = [
     name: 'Elite',
     price: 199,
     icon: Crown,
-    features: ['Everything in Pro', 'Unlimited Projects', 'AI Workforce', 'Quantum Engine', 'White-label exports', 'Dedicated support', 'API access', 'SLA guarantee'],
+    tokens: 'Unlimited',
+    features: ['Unlimited AI tokens', 'Unlimited Projects', 'AI Workforce', 'Quantum Engine', 'Evolution Layer', 'Global Network', 'White-label exports', 'Dedicated support', 'API access', 'SLA guarantee'],
     limitations: [],
   },
 ];
-
 export default function BillingPage() {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
