@@ -10,7 +10,13 @@ export const env = {
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/aiblty',
   
   // Auth
-  JWT_SECRET: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+  JWT_SECRET: (() => {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET environment variable is required and must be set');
+    }
+    return secret;
+  })(),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
   ADMIN_EMAILS: process.env.ADMIN_EMAILS?.split(',').map(e => e.trim().toLowerCase()) || [],
   
