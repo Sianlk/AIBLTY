@@ -129,49 +129,58 @@ serve(async (req) => {
     const { messages, mode = "general", stream = false } = await req.json();
     console.log("Request mode:", mode, "Stream:", stream, "Messages count:", messages?.length);
     
-    // Check user authentication and limits
+    // REQUIRE authentication - JWT is verified by Supabase gateway (verify_jwt = true)
     const authHeader = req.headers.get("Authorization");
-    let userId: string | null = null;
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    );
+    
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError || !userData?.user) {
+      console.error("Auth error:", authError);
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    const userId = userData.user.id;
     let userPlan = "free";
     
-    if (authHeader) {
-      const supabaseClient = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-      );
-      
-      const token = authHeader.replace("Bearer ", "");
-      const { data: userData } = await supabaseClient.auth.getUser(token);
-      
-      if (userData?.user) {
-        userId = userData.user.id;
-        
-        // Check daily limit using service role
-        const supabaseAdmin = createClient(
-          Deno.env.get("SUPABASE_URL") ?? "",
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-          { auth: { persistSession: false } }
+    // Check daily limit using service role
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
+    
+    const { data: limitData } = await supabaseAdmin.rpc('check_daily_limit', {
+      _user_id: userId,
+      _tokens_requested: 1
+    });
+    
+    if (limitData) {
+      const limit = limitData as { can_proceed: boolean; plan: string };
+      if (!limit.can_proceed) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Daily token limit reached. Upgrade your plan for more tokens.",
+            upgrade_required: true 
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-        
-        const { data: limitData } = await supabaseAdmin.rpc('check_daily_limit', {
-          _user_id: userId,
-          _tokens_requested: 1
-        });
-        
-        if (limitData) {
-          const limit = limitData as { can_proceed: boolean; plan: string };
-          if (!limit.can_proceed) {
-            return new Response(
-              JSON.stringify({ 
-                error: "Daily token limit reached. Upgrade your plan for more tokens.",
-                upgrade_required: true 
-              }),
-              { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          userPlan = limit.plan || "free";
-        }
       }
+      userPlan = limit.plan || "free";
     }
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -223,19 +232,11 @@ serve(async (req) => {
       throw new Error(`AI gateway error: ${response.status}`);
     }
 
-    // Increment usage after successful call
-    if (userId) {
-      const supabaseAdmin = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-        { auth: { persistSession: false } }
-      );
-      
-      await supabaseAdmin.rpc('increment_usage', {
-        _user_id: userId,
-        _tokens: 1
-      });
-    }
+    // Increment usage after successful call (userId is always set - auth required)
+    await supabaseAdmin.rpc('increment_usage', {
+      _user_id: userId,
+      _tokens: 1
+    });
 
     if (stream) {
       console.log("Returning stream response");
