@@ -15,7 +15,15 @@ async function main() {
       const existingUser = await prisma.user.findUnique({ where: { email } });
       
       if (!existingUser) {
-        const passwordHash = await bcrypt.hash('changeme123', 12);
+        // Use environment variable for admin password - NEVER use hardcoded passwords
+        const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD;
+        if (!adminPassword) {
+          console.log(`⚠️  Skipping admin creation for ${email} - ADMIN_DEFAULT_PASSWORD not set`);
+          console.log('   Set ADMIN_DEFAULT_PASSWORD environment variable to create admin users');
+          continue;
+        }
+        
+        const passwordHash = await bcrypt.hash(adminPassword, 12);
         
         await prisma.user.create({
           data: {
@@ -28,7 +36,7 @@ async function main() {
         });
         
         console.log(`✅ Created admin user: ${email}`);
-        console.log('   Default password: changeme123 (CHANGE THIS IMMEDIATELY)');
+        console.log('   Password set from ADMIN_DEFAULT_PASSWORD environment variable');
       } else {
         // Update existing user to admin
         await prisma.user.update({
