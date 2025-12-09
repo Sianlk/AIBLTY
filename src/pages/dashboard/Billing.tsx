@@ -24,6 +24,15 @@ const plans = [
     limitations: ['Limited AI capabilities', 'No AI Workforce', 'No Quantum Engine', 'No Priority Support'],
   },
   {
+    id: 'starter',
+    name: 'Starter',
+    price: 19,
+    icon: Sparkles,
+    tokens: '25 tokens/day',
+    features: ['25 AI queries/day', '3 Projects', 'All Core AI Tools', 'Business Builder Basic', 'Email Support'],
+    limitations: ['No AI Workforce', 'No Quantum Engine', 'No Priority Support'],
+  },
+  {
     id: 'pro',
     name: 'Pro',
     price: 49,
@@ -78,16 +87,30 @@ export default function BillingPage() {
 
   const handleUpgrade = async (plan: string) => {
     if (plan === 'free') return;
+    
     setLoading(true);
+    toast({
+      title: 'Processing',
+      description: 'Creating checkout session...',
+    });
+    
     try {
-      const response = await createCheckout(plan as 'pro' | 'elite');
+      const response = await createCheckout(plan as 'starter' | 'pro' | 'elite');
       if (response.url) {
+        toast({
+          title: 'Redirecting',
+          description: 'Opening Stripe checkout...',
+        });
         window.location.href = response.url;
       } else if (response.error) {
         throw new Error(response.error);
       }
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ 
+        title: 'Payment Error', 
+        description: error.message || 'Failed to create checkout. Please try again.', 
+        variant: 'destructive' 
+      });
     } finally {
       setLoading(false);
     }
@@ -95,15 +118,24 @@ export default function BillingPage() {
 
   const handleManageSubscription = async () => {
     setLoading(true);
+    toast({
+      title: 'Opening Portal',
+      description: 'Loading your billing portal...',
+    });
+    
     try {
       const response = await openBillingPortal();
       if (response.url) {
         window.location.href = response.url;
       } else if (response.error) {
-        toast({ title: 'Info', description: response.error });
+        toast({ 
+          title: 'Notice', 
+          description: response.error,
+          variant: response.error.includes('subscribe') ? 'default' : 'destructive'
+        });
       }
     } catch (error) {
-      toast({ title: 'Info', description: 'Please subscribe to a plan to manage billing' });
+      toast({ title: 'Notice', description: 'Please subscribe to a plan to manage billing' });
     } finally {
       setLoading(false);
     }
@@ -210,7 +242,7 @@ export default function BillingPage() {
               </motion.div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {plans.map((plan, i) => (
                 <motion.div
                   key={plan.id}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Check, Zap, Crown, Rocket, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import api from '@/lib/apiClient';
+import { createCheckout } from '@/lib/billingService';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -97,6 +97,10 @@ export default function PricingPage() {
 
   const handleSelectPlan = async (plan: PlanType) => {
     if (!user) {
+      toast({ 
+        title: 'Sign In Required', 
+        description: 'Please sign in to select a plan.' 
+      });
       navigate('/auth');
       return;
     }
@@ -112,15 +116,26 @@ export default function PricingPage() {
     }
 
     setLoadingPlan(plan);
+    toast({
+      title: 'Processing',
+      description: 'Creating checkout session...',
+    });
+    
     try {
-      const response = await api.createCheckout(plan);
-      if (response.data?.url) {
-        window.open(response.data.url, '_blank');
+      const response = await createCheckout(plan as 'starter' | 'pro' | 'elite');
+      if (response.url) {
+        toast({
+          title: 'Redirecting',
+          description: 'Opening Stripe checkout...',
+        });
+        window.open(response.url, '_blank');
+      } else if (response.error) {
+        throw new Error(response.error);
       }
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create checkout session',
+        title: 'Payment Error',
+        description: error.message || 'Failed to create checkout session. Please try again.',
         variant: 'destructive',
       });
     } finally {
