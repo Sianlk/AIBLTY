@@ -256,6 +256,12 @@ QUALITY STANDARD: Enterprise-grade, investor-ready, market-dominating.
 
     setLoading(true);
     setResponse(null);
+    
+    // Show immediate feedback
+    toast({
+      title: 'Genesis Initiated',
+      description: 'Building your full-stack specification...',
+    });
 
     try {
       const aiResponse = await sendAIMessage(
@@ -265,14 +271,29 @@ QUALITY STANDARD: Enterprise-grade, investor-ready, market-dominating.
       
       if (aiResponse.success) {
         setResponse(aiResponse.content);
-        toast({ title: 'Genesis Complete', description: 'Your full-stack specification is ready' });
+        toast({ 
+          title: 'Genesis Complete', 
+          description: 'Your full-stack specification is ready!' 
+        });
       } else {
-        throw new Error(aiResponse.error || 'Failed to generate build specification');
+        if (aiResponse.upgrade_required) {
+          toast({
+            title: 'Upgrade Required',
+            description: aiResponse.error || 'Daily limit reached. Upgrade for more AI queries.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Error',
+            description: aiResponse.error || 'Failed to generate. Please try again.',
+            variant: 'destructive',
+          });
+        }
       }
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to generate build specification',
+        description: error.message || 'Failed to generate build specification. Please try again.',
         variant: 'destructive',
       });
     } finally {

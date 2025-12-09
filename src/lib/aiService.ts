@@ -31,6 +31,7 @@ export interface AIResponse {
     total_tokens: number;
   };
   error?: string;
+  upgrade_required?: boolean;
 }
 
 export async function sendAIMessage(
@@ -38,26 +39,74 @@ export async function sendAIMessage(
   mode: AIMode = "general"
 ): Promise<AIResponse> {
   try {
+    // Check if user is authenticated first
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      console.error("No active session:", sessionError);
+      return { 
+        success: false, 
+        content: "", 
+        error: "Please sign in to use AI features. Click 'Get Started' to create an account or log in." 
+      };
+    }
+
+    // Validate messages
+    if (!messages || messages.length === 0) {
+      return { 
+        success: false, 
+        content: "", 
+        error: "No message provided" 
+      };
+    }
+
+    console.log("Sending AI request:", { mode, messageCount: messages.length });
+
     const { data, error } = await supabase.functions.invoke("ai-chat", {
       body: { messages, mode, stream: false },
     });
 
     if (error) {
       console.error("AI function error:", error);
+      
+      // Handle specific error types
+      if (error.message?.includes("401") || error.message?.includes("auth")) {
+        return { 
+          success: false, 
+          content: "", 
+          error: "Session expired. Please sign in again." 
+        };
+      }
+      
       return { 
         success: false, 
         content: "", 
-        error: error.message || "Failed to connect to AI service" 
+        error: error.message || "Failed to connect to AI service. Please try again." 
       };
     }
 
+    // Handle API-level errors
     if (data?.error) {
+      console.error("AI API error:", data.error);
       return { 
         success: false, 
         content: "", 
-        error: data.error 
+        error: data.error,
+        upgrade_required: data.upgrade_required || false
       };
     }
+
+    // Validate response content
+    if (!data?.content) {
+      console.error("No content in AI response:", data);
+      return {
+        success: false,
+        content: "",
+        error: "AI returned an empty response. Please try again."
+      };
+    }
+
+    console.log("AI response received successfully");
 
     return {
       success: true,
@@ -69,7 +118,7 @@ export async function sendAIMessage(
     return {
       success: false,
       content: "",
-      error: err instanceof Error ? err.message : "Unknown error occurred",
+      error: err instanceof Error ? err.message : "An unexpected error occurred. Please try again.",
     };
   }
 }
@@ -82,13 +131,21 @@ export async function streamAIMessage(
   onError?: (error: string) => void
 ): Promise<void> {
   try {
+    // Check if user is authenticated
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      onError?.("Please sign in to use AI features.");
+      return;
+    }
+
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ messages, mode, stream: true }),
       }
@@ -96,6 +153,16 @@ export async function streamAIMessage(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 401) {
+        onError?.("Session expired. Please sign in again.");
+        return;
+      }
+      if (response.status === 429) {
+        onError?.(errorData.error || "Daily limit reached. Upgrade for more AI queries.");
+        return;
+      }
+      
       throw new Error(errorData.error || `HTTP error: ${response.status}`);
     }
 
@@ -142,6 +209,6 @@ export async function streamAIMessage(
     onDone();
   } catch (error) {
     console.error("Stream error:", error);
-    onError?.(error instanceof Error ? error.message : "Stream failed");
+    onError?.(error instanceof Error ? error.message : "Stream failed. Please try again.");
   }
 }

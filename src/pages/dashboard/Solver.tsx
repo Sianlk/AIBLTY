@@ -33,22 +33,44 @@ export default function SolverPage() {
     setInput('');
     setLoading(true);
 
+    // Show immediate feedback
+    toast({
+      title: 'Processing',
+      description: 'Analyzing your problem...',
+    });
+
     try {
       const response = await sendAIMessage(newMessages, 'solver');
       
       if (response.success) {
         setMessages(prev => [...prev, { role: 'assistant', content: response.content }]);
-      } else {
         toast({
-          title: 'Error',
-          description: response.error || 'Failed to get AI response',
-          variant: 'destructive',
+          title: 'Complete',
+          description: 'Analysis ready',
         });
+      } else {
+        // Remove the user message if failed
+        setMessages(messages);
+        
+        if (response.upgrade_required) {
+          toast({
+            title: 'Upgrade Required',
+            description: response.error || 'Daily limit reached. Upgrade your plan for more AI queries.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Error',
+            description: response.error || 'Failed to get AI response. Please try again.',
+            variant: 'destructive',
+          });
+        }
       }
     } catch (error: any) {
+      setMessages(messages);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to solve problem',
+        description: error.message || 'Failed to solve problem. Please try again.',
         variant: 'destructive',
       });
     } finally {
