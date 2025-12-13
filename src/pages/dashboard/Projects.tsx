@@ -213,7 +213,7 @@ export default function ProjectsPage() {
                       </span>
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {new Date(project.createdAt).toLocaleDateString()}
+                        {new Date(project.created_at).toLocaleDateString()}
                       </span>
                     </div>
                   </div>

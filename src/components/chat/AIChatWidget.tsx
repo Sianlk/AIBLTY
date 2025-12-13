@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { sendAIMessage, type Message, type AIMode } from "@/lib/aiService";
 import { useUsageTracking } from "@/hooks/useUsageTracking";
 import { useAuth } from "@/contexts/AuthContext";
+import { getOrCreateConversation, getChatMessages, addChatMessage, logEvent, createProject } from "@/lib/database";
 import { Link } from "react-router-dom";
 import {
   MessageSquare,
@@ -21,6 +22,7 @@ import {
   Crown,
   Zap,
   Lock,
+  Plus,
 } from "lucide-react";
 
 interface AIChatWidgetProps {
@@ -43,6 +45,7 @@ export function AIChatWidget({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -54,10 +57,31 @@ export function AIChatWidget({
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user) {
       checkUsage();
+      loadConversation();
     }
-  }, [isOpen, checkUsage]);
+  }, [isOpen, user]);
+
+  const loadConversation = async () => {
+    if (!user) return;
+    try {
+      const conversation = await getOrCreateConversation();
+      setConversationId(conversation.id);
+      
+      // Load existing messages
+      const existingMessages = await getChatMessages(conversation.id);
+      if (existingMessages.length > 0) {
+        setMessages(existingMessages.map(m => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })));
+      }
+    } catch (error) {
+      console.error('Failed to load conversation:', error);
+      logEvent('chat', 'Failed to load conversation', 'error', { error: String(error) });
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -88,7 +112,50 @@ export function AIChatWidget({
     setInput("");
     setIsLoading(true);
 
+    // Check for project creation command
+    const createProjectMatch = input.match(/create (?:a )?project (?:called |named )?"?([^"]+)"?/i);
+
     try {
+      // Persist user message
+      if (conversationId) {
+        await addChatMessage(conversationId, 'user', input.trim());
+      }
+
+      // Handle project creation command
+      if (createProjectMatch) {
+        const projectName = createProjectMatch[1].trim();
+        try {
+          const project = await createProject(projectName);
+          const successMessage = `✅ Created project "${projectName}" successfully! You can view it in your [Projects](/dashboard/projects) page.`;
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: successMessage },
+          ]);
+          if (conversationId) {
+            await addChatMessage(conversationId, 'assistant', successMessage);
+          }
+          toast({
+            title: "Project Created",
+            description: `"${projectName}" has been created`,
+          });
+          logEvent('chat', 'Created project from chat', 'info', { projectId: project.id, projectName });
+        } catch (error) {
+          const errorMessage = `Failed to create project: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: errorMessage },
+          ]);
+          toast({
+            title: "Error",
+            description: "Failed to create project",
+            variant: "destructive",
+          });
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Regular AI message
       const response = await sendAIMessage(newMessages, mode);
 
       if (response.success) {
@@ -96,8 +163,15 @@ export function AIChatWidget({
           ...prev,
           { role: "assistant", content: response.content },
         ]);
+        
+        // Persist assistant message
+        if (conversationId) {
+          await addChatMessage(conversationId, 'assistant', response.content);
+        }
+        
         // Increment usage after successful response
         await incrementUsage(1);
+        logEvent('chat', 'AI response received', 'info', { mode });
       } else {
         if (response.error?.includes("Daily token limit")) {
           toast({
@@ -112,6 +186,7 @@ export function AIChatWidget({
             variant: "destructive",
           });
         }
+        logEvent('chat', `AI error: ${response.error}`, 'error', { mode });
       }
     } catch (error) {
       toast({
@@ -119,6 +194,7 @@ export function AIChatWidget({
         description: "Failed to connect to AI service",
         variant: "destructive",
       });
+      logEvent('chat', 'AI connection error', 'error', { error: String(error) });
     } finally {
       setIsLoading(false);
     }
@@ -130,6 +206,7 @@ export function AIChatWidget({
       handleSend();
     }
   };
+  
   if (!isOpen) {
     return (
       <motion.button
@@ -205,9 +282,13 @@ export function AIChatWidget({
               {messages.length === 0 && (
                 <div className="text-center py-8">
                   <Bot className="w-12 h-12 text-gold/30 mx-auto mb-4" />
-                  <p className="text-sm text-platinum-dark">
+                  <p className="text-sm text-platinum-dark mb-4">
                     Ask me anything. I'm here to help.
                   </p>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p>💡 Try: "Create a project called My App"</p>
+                    <p>💡 Try: "Help me solve a business problem"</p>
+                  </div>
                 </div>
               )}
 
