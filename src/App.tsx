@@ -39,6 +39,7 @@ import EvolutionPage from "./pages/dashboard/Evolution";
 import NetworkPage from "./pages/dashboard/Network";
 import BillingPage from "./pages/dashboard/Billing";
 import MarketingPage from "./pages/dashboard/Marketing";
+import DebugPage from "./pages/dashboard/Debug";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
             <Route path="/dashboard/network" element={<ProtectedRoute><NetworkPage /></ProtectedRoute>} />
             <Route path="/dashboard/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
             <Route path="/dashboard/marketing" element={<ProtectedRoute><MarketingPage /></ProtectedRoute>} />
+            <Route path="/dashboard/debug" element={<ProtectedRoute requireAdmin><DebugPage /></ProtectedRoute>} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminPage /></ProtectedRoute>} />
