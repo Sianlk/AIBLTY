@@ -169,31 +169,48 @@ serve(async (req) => {
     
     const userId = userData.user.id;
     let userPlan = "free";
+    let isAdmin = false;
     
-    // Check daily limit using service role
+    // Create admin client for server-side operations
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
     
-    const { data: limitData } = await supabaseAdmin.rpc('check_daily_limit', {
-      _user_id: userId,
-      _tokens_requested: 1
-    });
+    // Server-side admin role verification
+    const { data: roleData } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
     
-    if (limitData) {
-      const limit = limitData as { can_proceed: boolean; plan: string };
-      if (!limit.can_proceed) {
-        return new Response(
-          JSON.stringify({ 
-            error: "Daily token limit reached. Upgrade your plan for more tokens.",
-            upgrade_required: true 
-          }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+    isAdmin = !!roleData;
+    console.log("User role check:", { userId, isAdmin });
+    
+    // Check daily limit (admins bypass limits)
+    if (!isAdmin) {
+      const { data: limitData } = await supabaseAdmin.rpc('check_daily_limit', {
+        _user_id: userId,
+        _tokens_requested: 1
+      });
+      
+      if (limitData) {
+        const limit = limitData as { can_proceed: boolean; plan: string };
+        if (!limit.can_proceed) {
+          return new Response(
+            JSON.stringify({ 
+              error: "Daily token limit reached. Upgrade your plan for more tokens.",
+              upgrade_required: true 
+            }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        userPlan = limit.plan || "free";
       }
-      userPlan = limit.plan || "free";
+    } else {
+      userPlan = "elite"; // Admins get elite-level access
     }
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
