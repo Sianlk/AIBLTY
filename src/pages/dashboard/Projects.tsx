@@ -4,10 +4,10 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
-import api from '@/lib/apiClient';
+import { getProjects, createProject, deleteProject, type Project } from '@/lib/database';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  Plus, Search, FolderOpen, Sparkles, Clock, 
+  Plus, Search, FolderOpen, Sparkles, Clock,
   MoreVertical, Trash2, Edit, Loader2 
 } from 'lucide-react';
 import {
@@ -26,14 +26,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-interface Project {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
-  createdAt: string;
-}
-
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +33,7 @@ export default function ProjectsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
+
   const [creating, setCreating] = useState(false);
   const { toast } = useToast();
 
@@ -50,10 +43,10 @@ export default function ProjectsPage() {
 
   const loadProjects = async () => {
     try {
-      const response = await api.getProjects();
-      setProjects(response.data?.projects || []);
-    } catch (error) {
-      console.error('Failed to load projects:', error);
+      const data = await getProjects();
+      setProjects(data);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -67,7 +60,7 @@ export default function ProjectsPage() {
 
     setCreating(true);
     try {
-      await api.createProject(newTitle, newDescription);
+      await createProject(newTitle, newDescription);
       toast({ title: 'Success', description: 'Project created successfully' });
       setDialogOpen(false);
       setNewTitle('');

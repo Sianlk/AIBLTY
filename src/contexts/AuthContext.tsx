@@ -19,6 +19,7 @@ interface AuthContextType {
   user: UserWithProfile | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -147,8 +148,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
   };
 
+  const isAdmin = user?.role === 'admin';
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
