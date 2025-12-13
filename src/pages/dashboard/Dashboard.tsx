@@ -4,45 +4,52 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import api from '@/lib/apiClient';
+import { getProjects, getJobs, type Project, type Job } from '@/lib/database';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Brain, Rocket, Zap, Plus, FolderOpen, 
-  Clock, TrendingUp, Sparkles, ArrowRight 
+  Clock, TrendingUp, Sparkles, ArrowRight, Loader2, Activity
 } from 'lucide-react';
 
-interface Project {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
-  createdAt: string;
-}
-
 const quickActions = [
-  { icon: Brain, label: 'Problem Solver', href: '/dashboard/solver', color: 'text-primary' },
-  { icon: Rocket, label: 'Business Builder', href: '/dashboard/builder', color: 'text-secondary' },
-  { icon: Zap, label: 'Automation', href: '/dashboard/automation', color: 'text-glow-success' },
+  { icon: Brain, label: 'Problem Solver', href: '/dashboard/solver', color: 'text-primary', desc: 'Analyze and solve complex problems' },
+  { icon: Rocket, label: 'Business Builder', href: '/dashboard/builder', color: 'text-secondary', desc: 'Generate business plans & strategies' },
+  { icon: Zap, label: 'Automation', href: '/dashboard/automation', color: 'text-glow-success', desc: 'Create automated workflows' },
 ];
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadProjects();
+    loadData();
   }, []);
 
-  const loadProjects = async () => {
+  const loadData = async () => {
     try {
-      const response = await api.getProjects();
-      setProjects(response.data?.projects || []);
+      const [projectsData, jobsData] = await Promise.all([
+        getProjects(),
+        getJobs()
+      ]);
+      setProjects(projectsData);
+      setJobs(jobsData);
     } catch (error) {
-      console.error('Failed to load projects:', error);
+      console.error('Failed to load data:', error);
+      toast({
+        title: 'Error loading data',
+        description: 'Please refresh the page to try again',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  const completedJobs = jobs.filter(j => j.status === 'completed').length;
+  const runningJobs = jobs.filter(j => j.status === 'running').length;
 
   return (
     <DashboardLayout>
@@ -64,7 +71,7 @@ export default function Dashboard() {
                   : `You're on the ${user?.plan} plan`}
               </p>
             </div>
-            <Link to="/dashboard/projects/new">
+            <Link to="/dashboard/projects">
               <Button variant="glow">
                 <Plus className="w-4 h-4 mr-2" />
                 New Project
@@ -87,11 +94,11 @@ export default function Dashboard() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 + i * 0.05 }}
-                  className="glass-panel-hover p-6 cursor-pointer group"
+                  className="glass-panel-hover p-6 cursor-pointer group relative"
                 >
                   <action.icon className={`w-10 h-10 ${action.color} mb-4`} />
                   <h3 className="font-semibold mb-1">{action.label}</h3>
-                  <p className="text-sm text-muted-foreground">Launch tool</p>
+                  <p className="text-sm text-muted-foreground">{action.desc}</p>
                   <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity absolute top-6 right-6" />
                 </motion.div>
               </Link>
@@ -114,10 +121,8 @@ export default function Dashboard() {
 
           {loading ? (
             <div className="glass-panel p-8 text-center">
-              <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
-                <div className="h-4 bg-muted rounded w-1/3 mx-auto"></div>
-              </div>
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading projects...</p>
             </div>
           ) : projects.length === 0 ? (
             <div className="glass-panel p-8 text-center">
@@ -126,7 +131,7 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground mb-4">
                 Create your first project to get started with AI tools
               </p>
-              <Link to="/dashboard/projects/new">
+              <Link to="/dashboard/projects">
                 <Button variant="outline">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Project
@@ -162,9 +167,9 @@ export default function Dashboard() {
                       }`}>
                         {project.status}
                       </span>
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1 justify-end">
                         <Clock className="w-3 h-3" />
-                        {new Date(project.createdAt).toLocaleDateString()}
+                        {new Date(project.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </motion.div>
@@ -182,10 +187,10 @@ export default function Dashboard() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
           {[
-            { label: 'Projects', value: projects.length, icon: FolderOpen },
-            { label: 'AI Queries', value: '0', icon: Brain },
-            { label: 'Automations', value: '0', icon: Zap },
-            { label: 'This Month', value: '+0%', icon: TrendingUp },
+            { label: 'Projects', value: projects.length.toString(), icon: FolderOpen },
+            { label: 'AI Jobs', value: jobs.length.toString(), icon: Brain },
+            { label: 'Completed', value: completedJobs.toString(), icon: Zap },
+            { label: 'Running', value: runningJobs.toString(), icon: Activity },
           ].map((stat, i) => (
             <div key={stat.label} className="glass-panel p-4 text-center">
               <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
