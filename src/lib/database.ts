@@ -344,6 +344,34 @@ export async function createConversation(title?: string): Promise<Conversation> 
   return data as Conversation;
 }
 
+export async function updateConversation(id: string, updates: Partial<Pick<Conversation, 'title'>>): Promise<Conversation> {
+  const { data, error } = await supabase
+    .from('conversations')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data as Conversation;
+}
+
+export async function deleteConversation(id: string): Promise<void> {
+  // Delete messages first (cascade should handle this but be explicit)
+  await supabase
+    .from('chat_messages')
+    .delete()
+    .eq('conversation_id', id);
+  
+  const { error } = await supabase
+    .from('conversations')
+    .delete()
+    .eq('id', id);
+  
+  if (error) throw error;
+  logEvent('conversations', `Deleted conversation: ${id}`, 'info');
+}
+
 // ========== CHAT MESSAGES ==========
 export async function getChatMessages(conversationId: string): Promise<ChatMessage[]> {
   const { data, error } = await supabase
@@ -376,6 +404,15 @@ export async function addChatMessage(
     .eq('id', conversationId);
   
   return data as ChatMessage;
+}
+
+export async function deleteChatMessages(conversationId: string): Promise<void> {
+  const { error } = await supabase
+    .from('chat_messages')
+    .delete()
+    .eq('conversation_id', conversationId);
+  
+  if (error) throw error;
 }
 
 // ========== EVENT LOG (for debug page) ==========

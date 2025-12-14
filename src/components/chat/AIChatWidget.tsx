@@ -7,8 +7,17 @@ import { useToast } from "@/hooks/use-toast";
 import { sendAIMessage, type Message, type AIMode } from "@/lib/aiService";
 import { useUsageTracking } from "@/hooks/useUsageTracking";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOrCreateConversation, getChatMessages, addChatMessage, logEvent, createProject } from "@/lib/database";
+import { 
+  getOrCreateConversation, 
+  getChatMessages, 
+  addChatMessage, 
+  logEvent, 
+  createProject,
+  createConversation,
+  deleteChatMessages
+} from "@/lib/database";
 import { Link } from "react-router-dom";
+import { ChatHistoryPanel } from "./ChatHistoryPanel";
 import {
   MessageSquare,
   Send,
@@ -22,7 +31,8 @@ import {
   Crown,
   Zap,
   Lock,
-  Plus,
+  History,
+  Trash2,
 } from "lucide-react";
 
 interface AIChatWidgetProps {
@@ -42,6 +52,7 @@ export function AIChatWidget({
   const { usage, isLimitReached, incrementUsage, checkUsage } = useUsageTracking();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -63,23 +74,59 @@ export function AIChatWidget({
     }
   }, [isOpen, user]);
 
-  const loadConversation = async () => {
+  const loadConversation = async (specificConvoId?: string) => {
     if (!user) return;
     try {
-      const conversation = await getOrCreateConversation();
-      setConversationId(conversation.id);
-      
-      // Load existing messages
-      const existingMessages = await getChatMessages(conversation.id);
-      if (existingMessages.length > 0) {
+      let conversation;
+      if (specificConvoId) {
+        // Load specific conversation
+        setConversationId(specificConvoId);
+        const existingMessages = await getChatMessages(specificConvoId);
         setMessages(existingMessages.map(m => ({
           role: m.role as "user" | "assistant",
           content: m.content,
         })));
+      } else {
+        conversation = await getOrCreateConversation();
+        setConversationId(conversation.id);
+        
+        // Load existing messages
+        const existingMessages = await getChatMessages(conversation.id);
+        if (existingMessages.length > 0) {
+          setMessages(existingMessages.map(m => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+          })));
+        }
       }
     } catch (error) {
       console.error('Failed to load conversation:', error);
       logEvent('chat', 'Failed to load conversation', 'error', { error: String(error) });
+    }
+  };
+
+  const handleClearConversation = async () => {
+    if (!conversationId) return;
+    try {
+      await deleteChatMessages(conversationId);
+      setMessages([]);
+      toast({ title: 'Conversation cleared' });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to clear conversation',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleNewConversation = async () => {
+    try {
+      const newConvo = await createConversation('New Chat');
+      setConversationId(newConvo.id);
+      setMessages([]);
+    } catch (error) {
+      console.error('Failed to create new conversation:', error);
     }
   };
 
@@ -232,8 +279,21 @@ export function AIChatWidget({
         height: isMinimized ? "auto" : "500px",
       }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
-      className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] premium-card overflow-hidden flex flex-col"
+      className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] premium-card overflow-hidden flex flex-col relative"
     >
+      {/* Chat History Panel */}
+      <AnimatePresence>
+        {showHistory && (
+          <ChatHistoryPanel
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+            currentConversationId={conversationId}
+            onSelectConversation={(id) => loadConversation(id)}
+            onNewConversation={handleNewConversation}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gold/20 bg-gradient-to-r from-muted/50 via-gold/5 to-muted/50">
         <div className="flex items-center gap-3">
@@ -246,6 +306,26 @@ export function AIChatWidget({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setShowHistory(true)}
+            title="Chat history"
+          >
+            <History className="w-4 h-4" />
+          </Button>
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:text-destructive"
+              onClick={handleClearConversation}
+              title="Clear conversation"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
