@@ -24,8 +24,9 @@ interface DashboardLayoutProps {
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: FolderOpen, label: 'Projects', href: '/dashboard/projects' },
+  { icon: Rocket, label: 'Code Generator', href: '/dashboard/builder' },
   { icon: Brain, label: 'Intelligence', href: '/dashboard/solver' },
-  { icon: Rocket, label: 'App Builder', href: '/dashboard/builder' },
+  { icon: DollarSign, label: 'Business Builder', href: '/dashboard/business-builder' },
   { icon: Search, label: 'Research', href: '/dashboard/research' },
   { icon: DollarSign, label: 'Revenue', href: '/dashboard/revenue' },
   { icon: Zap, label: 'Automation', href: '/dashboard/automation' },

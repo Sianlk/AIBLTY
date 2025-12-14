@@ -24,6 +24,7 @@ import ProjectsPage from "./pages/dashboard/Projects";
 import ProjectDetailPage from "./pages/dashboard/ProjectDetail";
 import SolverPage from "./pages/dashboard/Solver";
 import BuilderPage from "./pages/dashboard/Builder";
+import BusinessBuilderPage from "./pages/dashboard/BusinessBuilder";
 import AutomationPage from "./pages/dashboard/Automation";
 import InsightsPage from "./pages/dashboard/Insights";
 import SettingsPage from "./pages/dashboard/Settings";
@@ -41,6 +42,7 @@ import BillingPage from "./pages/dashboard/Billing";
 import MarketingPage from "./pages/dashboard/Marketing";
 import DebugPage from "./pages/dashboard/Debug";
 import HistoryPage from "./pages/dashboard/History";
+import GeneratorPage from "./pages/dashboard/Generator";
 
 const queryClient = new QueryClient();
 
@@ -70,7 +72,9 @@ const App = () => (
             <Route path="/dashboard/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
             <Route path="/dashboard/projects/:projectId" element={<ProtectedRoute><ProjectDetailPage /></ProtectedRoute>} />
             <Route path="/dashboard/solver" element={<ProtectedRoute><SolverPage /></ProtectedRoute>} />
-            <Route path="/dashboard/builder" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
+            <Route path="/dashboard/builder" element={<ProtectedRoute><GeneratorPage /></ProtectedRoute>} />
+            <Route path="/dashboard/generator" element={<ProtectedRoute><GeneratorPage /></ProtectedRoute>} />
+            <Route path="/dashboard/business-builder" element={<ProtectedRoute><BusinessBuilderPage /></ProtectedRoute>} />
             <Route path="/dashboard/automation" element={<ProtectedRoute><AutomationPage /></ProtectedRoute>} />
             <Route path="/dashboard/insights" element={<ProtectedRoute><InsightsPage /></ProtectedRoute>} />
             <Route path="/dashboard/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
