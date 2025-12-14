@@ -40,6 +40,7 @@ import NetworkPage from "./pages/dashboard/Network";
 import BillingPage from "./pages/dashboard/Billing";
 import MarketingPage from "./pages/dashboard/Marketing";
 import DebugPage from "./pages/dashboard/Debug";
+import HistoryPage from "./pages/dashboard/History";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/dashboard/network" element={<ProtectedRoute><NetworkPage /></ProtectedRoute>} />
             <Route path="/dashboard/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
             <Route path="/dashboard/marketing" element={<ProtectedRoute><MarketingPage /></ProtectedRoute>} />
+            <Route path="/dashboard/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
             <Route path="/dashboard/debug" element={<ProtectedRoute requireAdmin><DebugPage /></ProtectedRoute>} />
             
             {/* Admin Routes */}

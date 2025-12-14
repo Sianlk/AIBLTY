@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { createJob, updateJob, createArtifact, logEvent, type Job } from "./database";
 import { sendAIMessage, type AIMode } from "./aiService";
 
+// Re-export CapabilityType from the wizard for backwards compatibility
 export type CapabilityType = 
   | 'app-generator'
   | 'intelligence-workspace'

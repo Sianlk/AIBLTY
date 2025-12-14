@@ -7,7 +7,7 @@ import {
   LayoutDashboard, FolderOpen, Brain, Rocket, Zap, 
   BarChart3, Settings, LogOut, Menu, X, Shield, 
   CreditCard, ChevronDown, User, Bot, Atom, Search,
-  DollarSign, Plug, Megaphone, Sparkles, Network, Lock
+  DollarSign, Plug, Megaphone, Sparkles, Network, Lock, History
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -37,6 +37,7 @@ const navItems = [
   { icon: Network, label: 'Network', href: '/dashboard/network' },
   { icon: Megaphone, label: 'Social', href: '/dashboard/social' },
   { icon: BarChart3, label: 'Insights', href: '/dashboard/insights' },
+  { icon: History, label: 'History', href: '/dashboard/history' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
