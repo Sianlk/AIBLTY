@@ -8,7 +8,7 @@ import { AibltyLogo } from '@/components/aiblty/AibltyLogo';
 import { GridBackground } from '@/components/atlas/GridBackground';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock, User, ArrowLeft, AlertCircle, Sparkles, Zap, Shield, Rocket, Brain, Globe, Play, CheckCircle } from 'lucide-react';
+import { Loader2, Mail, Lock, User, ArrowLeft, AlertCircle, Sparkles, Zap, Shield, Rocket, Brain, Globe, Play, CheckCircle, ShoppingCart, Bot, Server, Smartphone } from 'lucide-react';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -18,12 +18,14 @@ const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(8, 'Password must be at least 8 characters');
 
 const features = [
-  { icon: Sparkles, title: 'AI App Builder', desc: 'Generate full-stack apps instantly' },
-  { icon: Brain, title: 'Intelligence Workspace', desc: 'Solve complex problems with AI' },
-  { icon: Rocket, title: 'Business Generator', desc: 'Launch ventures with AI guidance' },
-  { icon: Shield, title: 'Enterprise Security', desc: 'Bank-grade protection built-in' },
-  { icon: Zap, title: 'Automation Engine', desc: 'Automate workflows effortlessly' },
-  { icon: Globe, title: 'Global Network', desc: 'Deploy worldwide instantly' },
+  { icon: Sparkles, title: 'SaaS Platform', desc: 'Auth, billing, dashboard' },
+  { icon: ShoppingCart, title: 'E-Commerce', desc: 'Cart, checkout, orders' },
+  { icon: Bot, title: 'AI/GPT App', desc: 'Chat, streaming, AI' },
+  { icon: Server, title: 'Full-Stack', desc: 'Frontend + Backend' },
+  { icon: Brain, title: 'React App', desc: 'Vite + TypeScript' },
+  { icon: Rocket, title: 'Next.js', desc: 'SSR + App Router' },
+  { icon: Shield, title: 'Backend API', desc: 'Express + Prisma' },
+  { icon: Smartphone, title: 'Mobile App', desc: 'iOS + Android' },
 ];
 
 const demoFeatures = [
