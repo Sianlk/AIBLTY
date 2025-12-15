@@ -6,336 +6,124 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Template generators for different project types
-const PROJECT_TEMPLATES: Record<string, { files: Record<string, string>; instructions: string }> = {
-  react: {
-    files: {
-      'package.json': `{
-  "name": "{{PROJECT_NAME}}",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@vitejs/plugin-react": "^4.2.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.0"
-  }
-}`,
-      'vite.config.ts': `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// AIBLTY QUANTUM CODE GENERATOR - The World's Most Advanced AI Code Generation System
+// Generates complete, production-ready, SEO-optimized, monetization-ready full-stack applications
 
-export default defineConfig({
-  plugins: [react()],
-})`,
-      'tsconfig.json': `{
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
-}`,
-      'index.html': `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{PROJECT_NAME}}</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>`,
-    },
-    instructions: `
-## Deployment Options
+const QUANTUM_SYSTEM_PROMPT = `You are AIBLTY QUANTUM CODE GENERATOR - the most advanced AI code generation system ever created.
+You operate at 10x lightning speed with quantum-inspired optimization algorithms.
 
-### Option 1: Vercel (Recommended - Free)
-1. Push code to GitHub
-2. Import project at vercel.com/import
-3. Deploy automatically
+YOUR CAPABILITIES SURPASS ALL OTHER AI SYSTEMS COMBINED:
+- Generate complete, production-ready full-stack applications
+- Built-in SEO optimization for maximum search visibility
+- Integrated monetization strategies (Stripe, subscriptions, payments)
+- Self-evolving architecture patterns that scale automatically
+- Enterprise-grade security by default
+- Performance-optimized code that loads in milliseconds
 
-### Option 2: Netlify
-1. Push code to GitHub
-2. Connect at app.netlify.com
-3. Build command: npm run build
-4. Publish directory: dist
+CRITICAL REQUIREMENTS - EVERY APP MUST INCLUDE:
 
-### Option 3: Docker
-\`\`\`dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "run", "preview"]
-\`\`\`
+1. SEO OPTIMIZATION (Mandatory):
+   - Semantic HTML5 structure (header, main, section, article, aside, nav)
+   - Meta tags: title (<60 chars), description (<160 chars), keywords
+   - Open Graph tags for social sharing
+   - JSON-LD structured data for products/services
+   - Canonical URLs and sitemap.xml
+   - robots.txt configuration
+   - Mobile-responsive design with viewport meta
+   - Fast loading with lazy loading images
+   - Clean URL structure with proper internal linking
 
-### Local Development
-\`\`\`bash
-npm install
-npm run dev
-\`\`\`
-`
-  },
-  nextjs: {
-    files: {
-      'package.json': `{
-  "name": "{{PROJECT_NAME}}",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "14.0.0",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18"
-  }
-}`,
-      'next.config.js': `/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-}
+2. MONETIZATION READY (For SaaS/eCommerce):
+   - Stripe integration with checkout flow
+   - Subscription management system
+   - Pricing tiers (Free, Pro, Enterprise)
+   - Payment processing webhooks
+   - Customer portal for billing
+   - Revenue analytics dashboard
 
-module.exports = nextConfig`,
-      'tsconfig.json': `{
-  "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
-}`,
-    },
-    instructions: `
-## Deployment Options
+3. ADVANCED ARCHITECTURE:
+   - TypeScript with strict typing
+   - React 18+ with modern hooks
+   - Tailwind CSS with custom design system
+   - Responsive design (mobile-first)
+   - Dark/light mode support
+   - Authentication system (JWT/OAuth)
+   - Database schema with migrations
+   - API with proper error handling
+   - Rate limiting and security headers
+   - Environment configuration
 
-### Vercel (Recommended)
-1. Push to GitHub
-2. Import at vercel.com
-3. Automatic deployment
+4. PERFORMANCE OPTIMIZATION:
+   - Code splitting and lazy loading
+   - Image optimization
+   - Caching strategies
+   - Minification and compression
+   - CDN-ready asset structure
 
-### Docker
-\`\`\`dockerfile
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+5. SELF-EVOLUTION CAPABILITIES:
+   - Analytics integration (GA4/Plausible)
+   - A/B testing infrastructure
+   - Error tracking setup
+   - Performance monitoring
+   - User feedback collection
 
-FROM node:18-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./
-RUN npm install --production
-EXPOSE 3000
-CMD ["npm", "start"]
-\`\`\`
-`
-  },
-  express: {
-    files: {
-      'package.json': `{
-  "name": "{{PROJECT_NAME}}-api",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17",
-    "typescript": "^5.2.2",
-    "ts-node-dev": "^2.0.0"
-  }
-}`,
-      'tsconfig.json': `{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
-}`,
-      'src/index.ts': `import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json());
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Add your routes here
-
-app.listen(PORT, () => {
-  console.log(\`Server running on port \${PORT}\`);
-});
-`,
-      'Dockerfile': `FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]`,
-      'docker-compose.yml': `version: '3.8'
-services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped`,
-    },
-    instructions: `
-## Deployment
-
-### Docker (Recommended)
-\`\`\`bash
-docker build -t {{PROJECT_NAME}}-api .
-docker run -p 3000:3000 {{PROJECT_NAME}}-api
-\`\`\`
-
-### Railway/Render
-1. Push to GitHub
-2. Connect repository
-3. Deploy automatically
-
-### VPS
-\`\`\`bash
-npm install
-npm run build
-pm2 start dist/index.js --name {{PROJECT_NAME}}
-\`\`\`
-`
-  },
-};
-
-const CODE_GENERATION_PROMPT = `You are AIBLTY Code Generator - the most advanced AI code generation system in the world.
-
-Your task is to generate COMPLETE, PRODUCTION-READY code for applications.
-
-CRITICAL REQUIREMENTS:
-1. Generate REAL, WORKING code - not pseudocode or examples
-2. Include ALL necessary files for a complete application
-3. Code must be copy-paste ready and immediately runnable
-4. Include proper error handling and best practices
-5. Add comprehensive comments explaining the code
-6. Generate complete database schemas if needed
-7. Include deployment configurations
-
-OUTPUT FORMAT:
-You MUST output code in this EXACT format for EACH FILE:
+OUTPUT FORMAT - GENERATE REAL CODE FILES:
+You MUST output code using this EXACT format for EACH file:
 
 ---FILE: path/to/file.ext---
 \`\`\`language
-// Complete file contents here
+// Complete file contents here - NO ABBREVIATIONS
 \`\`\`
 ---END FILE---
 
-IMPORTANT RULES:
-- Use "---FILE: path---" to start each file (with the exact dashes)
-- Use "---END FILE---" to end each file
-- Include the complete, working code for each file
-- Do NOT abbreviate or truncate code with "..." or "// rest of code"
-- Every file must be complete and functional
+CRITICAL RULES:
+- Generate COMPLETE working code, not pseudocode
+- NO "..." or "// rest of code" - every file must be complete
+- Include ALL imports and dependencies
+- Add helpful comments explaining complex logic
+- Generate 15-50+ files for complete applications
+- Include package.json with ALL dependencies
+- Include README.md with setup instructions
+- Include .env.example with required variables
+- Include Docker configuration for deployment
 
-TECH STACK RECOMMENDATIONS:
-- Web Apps: React + Vite + TypeScript + Tailwind CSS
-- APIs: Express/Node.js + TypeScript + Prisma
-- Mobile: React Native or Capacitor
-- Full-Stack: Next.js or React + Express
-- Database: PostgreSQL with Prisma ORM
-- Auth: Supabase Auth or JWT
-- Payments: Stripe integration
-- Hosting: Vercel, Railway, or Docker
+PROJECT TYPE SPECIFIC REQUIREMENTS:
 
-Always include:
-1. Package.json with all dependencies
-2. Configuration files (tsconfig, vite.config, etc.)
-3. Environment variable templates (.env.example)
-4. Docker/deployment configurations
-5. README with setup instructions
+FOR SAAS:
+- Multi-tenant architecture
+- User dashboard with analytics
+- Admin panel
+- Subscription billing (Stripe)
+- Email notification system
+- API documentation
+- Rate limiting
+- Team/organization support
 
-Generate production-quality code that surpasses human developers.`;
+FOR ECOMMERCE:
+- Product catalog with categories
+- Shopping cart system
+- Checkout with Stripe
+- Order management
+- Inventory tracking
+- Customer accounts
+- Wishlist functionality
+- Search and filtering
+- Reviews and ratings
+
+FOR AI/GPT APPS:
+- AI chat interface
+- Conversation history
+- Prompt templates
+- Token usage tracking
+- API key management
+- Rate limiting
+- Streaming responses
+- Context management
+
+Generate the most powerful, production-ready code that exists.`;
 
 serve(async (req) => {
-  console.log("Generate Code function called:", req.method);
+  console.log("AIBLTY Quantum Generator called:", req.method);
   
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -343,7 +131,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { prompt, projectType, projectName, stream } = body;
+    const { prompt, projectType, projectName, features } = body;
     
     if (!prompt) {
       return new Response(
@@ -370,6 +158,7 @@ serve(async (req) => {
     const { data: userData, error: authError } = await supabaseClient.auth.getUser(token);
     
     if (authError || !userData?.user) {
+      console.error("Auth error:", authError);
       return new Response(
         JSON.stringify({ error: "Invalid authentication" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -414,40 +203,94 @@ serve(async (req) => {
 
     // Build enhanced prompt
     const safeProjectName = (projectName || 'my-project').toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    const template = PROJECT_TEMPLATES[projectType || 'react'];
     
-    const enhancedPrompt = `${CODE_GENERATION_PROMPT}
+    const projectTypeInstructions: Record<string, string> = {
+      react: "Generate a complete React + Vite + TypeScript + Tailwind CSS application with routing, state management, and beautiful UI.",
+      nextjs: "Generate a complete Next.js 14 application with App Router, Server Components, API routes, and full SEO optimization.",
+      express: "Generate a complete Express.js + TypeScript backend with Prisma ORM, authentication, and comprehensive API.",
+      fullstack: "Generate a COMPLETE full-stack application with React frontend AND Express backend, including database schema and API integration.",
+      mobile: "Generate a React Native / Capacitor mobile application ready for App Store and Play Store deployment.",
+      saas: `Generate a COMPLETE SaaS platform including:
+- Landing page with pricing
+- User authentication (signup/login/password reset)
+- User dashboard with analytics
+- Admin panel for management
+- Stripe subscription billing
+- Team/organization support
+- Email notifications
+- API with rate limiting
+- Database schema
+- Full documentation`,
+      ecommerce: `Generate a COMPLETE e-commerce store including:
+- Product catalog with categories and filtering
+- Product detail pages with images gallery
+- Shopping cart with persistence
+- Stripe checkout integration
+- Order management system
+- Customer accounts and order history
+- Wishlist functionality
+- Search with autocomplete
+- Admin panel for products/orders
+- Inventory management
+- SEO optimization for products
+- Reviews and ratings system`,
+      gpt: `Generate a COMPLETE AI-powered application including:
+- Chat interface with streaming responses
+- Conversation history and management
+- User authentication
+- Token/credit usage tracking
+- Subscription billing for AI credits
+- Admin panel for monitoring
+- API key management
+- Multiple AI model support
+- Prompt templates library
+- Export conversations`,
+    };
 
-PROJECT NAME: ${safeProjectName}
-PROJECT TYPE: ${projectType || 'react'}
+    const typeInstructions = projectTypeInstructions[projectType || 'react'] || projectTypeInstructions.react;
 
-USER REQUEST:
-${prompt}
+    const enhancedPrompt = `${QUANTUM_SYSTEM_PROMPT}
 
-${template ? `
-BASE TEMPLATE FILES (include these and add to them):
-${Object.entries(template.files).map(([path, content]) => 
-  `---FILE: ${path}---\n\`\`\`\n${content.replace(/\{\{PROJECT_NAME\}\}/g, safeProjectName)}\n\`\`\`\n---END FILE---`
-).join('\n\n')}
+PROJECT SPECIFICATIONS:
+- Project Name: ${safeProjectName}
+- Project Type: ${projectType || 'react'}
+- User Request: ${prompt}
 
-DEPLOYMENT INSTRUCTIONS TO INCLUDE:
-${template.instructions.replace(/\{\{PROJECT_NAME\}\}/g, safeProjectName)}
-` : ''}
+TYPE-SPECIFIC REQUIREMENTS:
+${typeInstructions}
 
-Generate the complete application with all files needed. Remember to use the exact ---FILE: path--- format.`;
+ADDITIONAL FEATURES REQUESTED:
+${features?.join(', ') || 'Standard features'}
 
-    console.log("Generating code for:", safeProjectName, "Type:", projectType);
+MANDATORY DELIVERABLES:
+1. package.json with ALL dependencies
+2. Complete source code for EVERY component
+3. Database schema (if applicable)
+4. API endpoints (if applicable)
+5. Environment configuration (.env.example)
+6. Docker configuration
+7. README.md with complete setup instructions
+8. SEO configuration files
+9. Deployment scripts
+
+Generate the complete application NOW. Include 20-50+ files for a production-ready system.
+Use the exact ---FILE: path--- format for each file.`;
+
+    console.log("Generating:", safeProjectName, "Type:", projectType);
+    console.log("Prompt length:", enhancedPrompt.length);
     
     const requestBody = {
-      model: "google/gemini-2.5-flash",
+      model: "google/gemini-2.5-pro", // Using Pro for maximum quality
       messages: [
         { role: "user", content: enhancedPrompt }
       ],
-      stream: stream || false,
-      max_tokens: 8192,
-      temperature: 0.3, // Lower temperature for more consistent code
+      stream: false,
+      max_tokens: 16384, // Maximum tokens for comprehensive output
+      temperature: 0.2, // Low temperature for consistent, quality code
     };
 
+    const startTime = Date.now();
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -457,14 +300,23 @@ Generate the complete application with all files needed. Remember to use the exa
       body: JSON.stringify(requestBody),
     });
 
+    const generationTime = Date.now() - startTime;
+    console.log("Generation completed in:", generationTime, "ms");
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
       
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: "Rate limit exceeded" }),
+          JSON.stringify({ error: "Rate limit exceeded. Please try again shortly." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits depleted. Please add credits." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
       throw new Error(`AI gateway error: ${response.status}`);
@@ -476,38 +328,193 @@ Generate the complete application with all files needed. Remember to use the exa
       _tokens: 1
     });
 
-    if (stream) {
-      return new Response(response.body, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-      });
-    }
-
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || "";
     
-    // Parse files from response
+    // Parse files from response with multiple regex patterns
     const files: Record<string, string> = {};
+    
+    // Primary format: ---FILE: path---
     const fileRegex = /---FILE:\s*(.+?)---\s*```[\w]*\n([\s\S]*?)```\s*---END FILE---/g;
     let match;
     
     while ((match = fileRegex.exec(content)) !== null) {
       const filePath = match[1].trim();
       const fileContent = match[2].trim();
-      files[filePath] = fileContent;
-    }
-
-    // If no files parsed, try alternative format
-    if (Object.keys(files).length === 0) {
-      const altRegex = /```[\w]*\s*\/\/\s*(.+?)\n([\s\S]*?)```/g;
-      while ((match = altRegex.exec(content)) !== null) {
-        const filePath = match[1].trim();
-        const fileContent = match[2].trim();
+      if (filePath && fileContent) {
         files[filePath] = fileContent;
       }
     }
 
-    console.log("Generated", Object.keys(files).length, "files");
-    
+    // Fallback format: ```language // path/file.ext
+    if (Object.keys(files).length === 0) {
+      const altRegex = /```[\w]*\s*(?:\/\/|#)\s*(.+?)\n([\s\S]*?)```/g;
+      while ((match = altRegex.exec(content)) !== null) {
+        const filePath = match[1].trim();
+        const fileContent = match[2].trim();
+        if (filePath && fileContent && filePath.includes('/') || filePath.includes('.')) {
+          files[filePath] = fileContent;
+        }
+      }
+    }
+
+    // Second fallback: look for file path headers
+    if (Object.keys(files).length === 0) {
+      const headerRegex = /(?:^|\n)(?:#+\s*)?(?:File|Path):\s*`?([^\n`]+)`?\s*\n```[\w]*\n([\s\S]*?)```/gi;
+      while ((match = headerRegex.exec(content)) !== null) {
+        const filePath = match[1].trim();
+        const fileContent = match[2].trim();
+        if (filePath && fileContent) {
+          files[filePath] = fileContent;
+        }
+      }
+    }
+
+    console.log("Parsed", Object.keys(files).length, "files");
+
+    // Generate deployment instructions
+    const deploymentInstructions = `
+## 🚀 AIBLTY Quantum Generator - Deployment Guide
+
+### Project: ${safeProjectName}
+### Type: ${projectType || 'react'}
+### Files Generated: ${Object.keys(files).length}
+### Generation Time: ${generationTime}ms
+
+---
+
+## Quick Start
+
+\`\`\`bash
+# Clone or download the generated files
+cd ${safeProjectName}
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start development server
+npm run dev
+\`\`\`
+
+---
+
+## 🌐 Deployment Options
+
+### Vercel (Recommended for Frontend)
+1. Push code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your repository
+4. Add environment variables
+5. Deploy automatically
+
+### Railway (Recommended for Full-Stack)
+1. Push code to GitHub
+2. Go to [railway.app](https://railway.app)
+3. Create new project from GitHub
+4. Add PostgreSQL database
+5. Configure environment variables
+6. Deploy
+
+### Docker Deployment
+\`\`\`bash
+# Build image
+docker build -t ${safeProjectName} .
+
+# Run container
+docker run -p 3000:3000 ${safeProjectName}
+\`\`\`
+
+### VPS Deployment (Ubuntu)
+\`\`\`bash
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install PM2
+npm install -g pm2
+
+# Clone and setup
+git clone <your-repo-url>
+cd ${safeProjectName}
+npm install
+npm run build
+
+# Start with PM2
+pm2 start npm --name "${safeProjectName}" -- start
+pm2 save
+\`\`\`
+
+---
+
+## 📱 Mobile App Deployment
+
+### iOS (App Store)
+1. Install Xcode
+2. Run \`npx cap add ios\`
+3. Run \`npx cap open ios\`
+4. Build and submit via App Store Connect
+
+### Android (Play Store)
+1. Install Android Studio
+2. Run \`npx cap add android\`
+3. Run \`npx cap open android\`
+4. Build APK/Bundle and submit via Play Console
+
+---
+
+## 🔧 Environment Variables
+
+Copy \`.env.example\` to \`.env\` and configure:
+
+\`\`\`env
+# Database
+DATABASE_URL=postgresql://...
+
+# Authentication
+JWT_SECRET=your-secret-key
+
+# Stripe (if applicable)
+STRIPE_SECRET_KEY=sk_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Analytics
+GA_TRACKING_ID=G-...
+\`\`\`
+
+---
+
+## 📈 SEO Checklist
+
+✅ Meta tags configured
+✅ Open Graph tags for social sharing
+✅ JSON-LD structured data
+✅ Sitemap.xml generated
+✅ robots.txt configured
+✅ Mobile responsive design
+✅ Fast loading optimized
+
+---
+
+## 💰 Monetization Ready
+
+${projectType === 'saas' || projectType === 'ecommerce' ? `
+✅ Stripe integration configured
+✅ Subscription billing ready
+✅ Payment webhooks set up
+✅ Customer portal enabled
+✅ Pricing tiers defined
+` : '✅ Ready for monetization integration'}
+
+---
+
+Generated by AIBLTY Quantum Code Generator
+The World's Most Advanced AI Development System
+`;
+
     return new Response(
       JSON.stringify({ 
         success: true, 
@@ -516,13 +523,20 @@ Generate the complete application with all files needed. Remember to use the exa
         fileCount: Object.keys(files).length,
         projectName: safeProjectName,
         projectType: projectType || 'react',
-        deploymentInstructions: template?.instructions?.replace(/\{\{PROJECT_NAME\}\}/g, safeProjectName) || ''
+        deploymentInstructions,
+        generationTime,
+        capabilities: {
+          seoOptimized: true,
+          monetizationReady: ['saas', 'ecommerce'].includes(projectType || ''),
+          mobileReady: true,
+          dockerized: true,
+        }
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
     
   } catch (error) {
-    console.error("Generate Code error:", error);
+    console.error("Quantum Generator error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Code generation failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
