@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -167,11 +168,18 @@ function buildFileTree(files: Record<string, string>): { name: string; path: str
 export function CodeGenerator() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   
   const [step, setStep] = useState<'input' | 'processing' | 'results'>('input');
   const [prompt, setPrompt] = useState('');
   const [projectName, setProjectName] = useState('');
-  const [projectType, setProjectType] = useState<ProjectType>('saas');
+  const [projectType, setProjectType] = useState<ProjectType>(() => {
+    const urlType = searchParams.get('type');
+    if (urlType && ['saas', 'ecommerce', 'gpt', 'react', 'nextjs', 'express', 'fullstack', 'mobile'].includes(urlType)) {
+      return urlType as ProjectType;
+    }
+    return 'saas';
+  });
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState('');
   const [error, setError] = useState<string | null>(null);

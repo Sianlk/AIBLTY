@@ -8,13 +8,19 @@ import { getProjects, getJobs, type Project, type Job } from '@/lib/database';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Brain, Rocket, Zap, Plus, FolderOpen, 
-  Clock, TrendingUp, Sparkles, ArrowRight, Loader2, Activity
+  Clock, TrendingUp, Sparkles, ArrowRight, Loader2, Activity,
+  ShoppingCart, Bot, Server, Code2, FileCode, Database, Smartphone
 } from 'lucide-react';
 
-const quickActions = [
-  { icon: Brain, label: 'Problem Solver', href: '/dashboard/solver', color: 'text-primary', desc: 'Analyze and solve complex problems' },
-  { icon: Rocket, label: 'Business Builder', href: '/dashboard/builder', color: 'text-secondary', desc: 'Generate business plans & strategies' },
-  { icon: Zap, label: 'Automation', href: '/dashboard/automation', color: 'text-glow-success', desc: 'Create automated workflows' },
+const generatorTypes = [
+  { icon: Sparkles, label: 'SaaS Platform', href: '/dashboard/builder?type=saas', color: 'from-primary to-secondary', desc: 'Auth, billing, dashboard' },
+  { icon: ShoppingCart, label: 'E-Commerce', href: '/dashboard/builder?type=ecommerce', color: 'from-secondary to-primary', desc: 'Cart, checkout, orders' },
+  { icon: Bot, label: 'AI/GPT App', href: '/dashboard/builder?type=gpt', color: 'from-primary to-glow-success', desc: 'Chat, streaming, AI' },
+  { icon: Server, label: 'Full-Stack', href: '/dashboard/builder?type=fullstack', color: 'from-glow-success to-primary', desc: 'Frontend + Backend' },
+  { icon: Code2, label: 'React App', href: '/dashboard/builder?type=react', color: 'from-secondary to-glow-success', desc: 'Vite + TypeScript' },
+  { icon: FileCode, label: 'Next.js', href: '/dashboard/builder?type=nextjs', color: 'from-primary to-secondary', desc: 'SSR + App Router' },
+  { icon: Database, label: 'Backend API', href: '/dashboard/builder?type=express', color: 'from-glow-success to-secondary', desc: 'Express + Prisma' },
+  { icon: Smartphone, label: 'Mobile App', href: '/dashboard/builder?type=mobile', color: 'from-secondary to-primary', desc: 'iOS + Android' },
 ];
 
 export default function Dashboard() {
@@ -80,26 +86,32 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* Generator Types - Full Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <h2 className="text-lg font-semibold mb-4">AI Tools</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {quickActions.map((action, i) => (
-              <Link key={action.label} to={action.href}>
+          <h2 className="text-lg font-semibold mb-4">Code Generators</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {generatorTypes.map((type, i) => (
+              <Link key={type.label} to={type.href}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 + i * 0.05 }}
-                  className="glass-panel-hover p-6 cursor-pointer group relative"
+                  transition={{ delay: 0.1 + i * 0.03 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="glass-panel-hover p-4 cursor-pointer group relative overflow-hidden"
                 >
-                  <action.icon className={`w-10 h-10 ${action.color} mb-4`} />
-                  <h3 className="font-semibold mb-1">{action.label}</h3>
-                  <p className="text-sm text-muted-foreground">{action.desc}</p>
-                  <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity absolute top-6 right-6" />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${type.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
+                  <div className="relative z-10">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${type.color} flex items-center justify-center mb-3`}>
+                      <type.icon className="w-5 h-5 text-background" />
+                    </div>
+                    <h3 className="font-semibold text-sm mb-1">{type.label}</h3>
+                    <p className="text-xs text-muted-foreground">{type.desc}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4" />
                 </motion.div>
               </Link>
             ))}
