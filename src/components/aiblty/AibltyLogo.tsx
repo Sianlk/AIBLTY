@@ -1,41 +1,43 @@
 import { motion } from "framer-motion";
+import aibltyLogo from "@/assets/aiblty-logo.png";
 
 interface AibltyLogoProps {
   className?: string;
+  size?: "sm" | "md" | "lg";
 }
 
-export const AibltyLogo = ({ className }: AibltyLogoProps) => {
+export const AibltyLogo = ({ className, size = "md" }: AibltyLogoProps) => {
+  const sizes = {
+    sm: { img: 32, text: "text-lg", sub: "text-[8px]" },
+    md: { img: 40, text: "text-xl", sub: "text-[10px]" },
+    lg: { img: 56, text: "text-2xl", sub: "text-xs" },
+  };
+
+  const { img, text, sub } = sizes[size];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex items-center gap-3"
+      className={`flex items-center gap-3 ${className || ""}`}
     >
       <div className="relative">
-        <svg width="40" height="40" viewBox="0 0 40 40" className="text-primary">
-          <defs>
-            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" />
-              <stop offset="100%" stopColor="hsl(var(--primary) / 0.6)" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M20 2L37 11v18l-17 9-17-9V11z"
-            fill="url(#logoGradient)"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.5"
-          />
-          <text x="20" y="25" textAnchor="middle" fill="hsl(var(--primary-foreground))" fontSize="14" fontWeight="bold">A</text>
-        </svg>
+        <img 
+          src={aibltyLogo} 
+          alt="AIBLTY Logo" 
+          width={img} 
+          height={img}
+          className="object-contain"
+        />
         <motion.div
-          className="absolute inset-0 rounded-full border border-primary/30"
+          className="absolute inset-0 rounded-full border border-gold/30"
           animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         />
       </div>
       <div className="flex flex-col">
-        <span className="text-xl font-bold tracking-wider text-foreground">AIBLTY</span>
-        <span className="text-[10px] font-mono text-muted-foreground tracking-widest">AI-POWERED ABILITY</span>
+        <span className={`${text} font-bold tracking-wider text-foreground`}>AIBLTY</span>
+        <span className={`${sub} font-mono text-gold tracking-widest`}>AI-POWERED ABILITY</span>
       </div>
     </motion.div>
   );
