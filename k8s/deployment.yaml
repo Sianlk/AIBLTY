@@ -1,0 +1,125 @@
+# Kubernetes Deployment — AIBLTY Health
+# Domain: health
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiblty-api
+  namespace: production
+  labels:
+    app: aiblty
+    version: "1.0.0"
+    domain: health
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aiblty
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: aiblty
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/sianlk/aiblty:latest
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: aiblty-secrets
+                  key: database-url
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aiblty-secrets
+                  key: secret-key
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aiblty-secrets
+                  key: openai-api-key
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: aiblty-secrets
+                  key: redis-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+      securityContext:
+        fsGroup: 1000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiblty-service
+  namespace: production
+spec:
+  selector:
+    app: aiblty
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: aiblty-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: aiblty-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
